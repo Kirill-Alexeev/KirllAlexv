@@ -1,53 +1,52 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
     photo = models.ImageField(
-        _('photo'),
+        'фото',
         upload_to='users/photos/',
         null=True,
         blank=True,
-        help_text=_('Фото профиля пользователя')
+        help_text='Фото профиля пользователя'
     )
 
     phone = models.CharField(
-        _('phone number'),
+        'номер телефона',
         max_length=20,
         null=True,
         blank=True,
-        help_text=_('Телефонный номер в международном формате')
+        help_text='Телефонный номер в международном формате'
     )
 
     bio = models.TextField(
-        _('biography'),
+        'биография',
         max_length=500,
         null=True,
         blank=True,
-        help_text=_('Короткая биография или описание')
+        help_text='Короткая биография или описание'
     )
 
     date_of_birth = models.DateField(
-        _('date of birth'),
+        'дата рождения',
         null=True,
         blank=True,
-        help_text=_('Дата рождения пользователя')
+        help_text='Дата рождения пользователя'
     )
 
     created_at = models.DateTimeField(
-        _('created at'),
+        'дата создания',
         auto_now_add=True
     )
 
     updated_at = models.DateTimeField(
-        _('updated at'),
+        'дата обновления',
         auto_now=True
     )
 
     class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
         ordering = ['-date_joined']
 
     def __str__(self):
