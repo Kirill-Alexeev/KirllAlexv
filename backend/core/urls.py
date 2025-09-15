@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
+    path('api/tasks/', include('task_planner.urls')),
 ]
 
 if settings.DEBUG:
