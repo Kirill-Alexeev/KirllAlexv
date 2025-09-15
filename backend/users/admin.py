@@ -93,6 +93,6 @@ class CustomUserAdmin(UserAdmin):
     list_per_page = 20
 
 
-admin.site.site_header = _('User Administration')
-admin.site.site_title = _('User Admin')
-admin.site.index_title = _('User Management')
+admin.site.site_header = _('Администрирование пользователей')
+admin.site.site_title = _('Пользователь')
+admin.site.index_title = _('Управление пользователями')
