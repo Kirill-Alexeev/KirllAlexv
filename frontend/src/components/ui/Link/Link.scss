@@ -1,0 +1,63 @@
+.custom-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  // Sizes
+  &--sm {
+    font-size: 14px;
+  }
+
+  &--md {
+    font-size: 16px;
+  }
+
+  &--lg {
+    font-size: 18px;
+  }
+
+  // Variants
+  &--default {
+    color: #3b82f6;
+
+    &:hover {
+      color: #2563eb;
+    }
+  }
+
+  &--primary {
+    color: #1f2937;
+    font-weight: 500;
+
+    &:hover {
+      color: #3b82f6;
+    }
+  }
+
+  &--secondary {
+    color: #6b7280;
+
+    &:hover {
+      color: #374151;
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+  }
+
+  &__text {
+    line-height: 1;
+  }
+}
