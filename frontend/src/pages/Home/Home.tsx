@@ -102,7 +102,7 @@ export const Home: React.FC = () => {
                                 </p>
                                 {isAuthenticated ? (
                                     <Link to="/tasks">
-                                        <Button variant="primary" size="sm">
+                                        <Button variant="secondary" size="sm">
                                             Открыть
                                         </Button>
                                     </Link>

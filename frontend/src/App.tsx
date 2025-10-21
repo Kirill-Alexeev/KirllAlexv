@@ -5,6 +5,7 @@ import { store } from '@/stores'
 import { AppRoutes } from '@/routes'
 import { checkAuth } from '@/stores/auth/authActions'
 import './App.scss'
+import { Layout } from './components/ui/Layout/Layout'
 
 const AppContent: React.FC = () => {
   const dispatch = useDispatch()
@@ -15,7 +16,9 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="app">
-      <AppRoutes />
+      <Layout>
+        <AppRoutes />
+      </Layout>
     </div>
   )
 }

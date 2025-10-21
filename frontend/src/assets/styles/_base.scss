@@ -1,0 +1,233 @@
+@use 'sass:map';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// ===== Базовые стили =====
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: map.get($font-family, 'primary');
+    font-size: map.get($font-size, 'mid');
+    font-weight: map.get($font-weight, 'normal');
+    line-height: map.get($line-height, 'normal');
+    color: map.get($colors, 'light');
+    background-color: map.get($colors, 'bg-4');
+    overflow-x: hidden;
+
+    @include scrollbar;
+}
+
+// ===== Типографика =====
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: map.get($font-weight, 'bold');
+    line-height: map.get($line-height, 'tight');
+    color: map.get($colors, 'text-dark');
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: map.get($font-size, 'xlhl');
+
+    @include mobile {
+        font-size: map.get($font-size, 'lhl');
+    }
+}
+
+h2 {
+    font-size: map.get($font-size, 'lhl');
+
+    @include mobile {
+        font-size: map.get($font-size, 'mhl');
+    }
+}
+
+h3 {
+    font-size: map.get($font-size, 'mhl');
+}
+
+h4 {
+    font-size: map.get($font-size, 'shl');
+}
+
+h5 {
+    font-size: map.get($font-size, 'xl');
+}
+
+h6 {
+    font-size: map.get($font-size, 'lg');
+}
+
+// ===== LINKS =====
+a {
+    color: map.get($colors, 'light');
+    transition: color 0.3s ease-in-out;
+
+    &:hover,
+    &:focus {
+        color: map.get($colors, 'accent');
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+}
+
+// ===== Кнопки =====
+button {
+    transition: all 0.3s ease;
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+// ===== Элементы формы =====
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid map.get($colors, 'gray-3');
+    border-radius: 6px;
+    background-color: map.get($colors, 'gray-4');
+    transition: all 0.15s ease;
+
+    &:focus {
+        border-color: map.get($colors, 'light');
+        box-shadow: 0 0 0 3px rgba(map.get($colors, 'dark'), 0.1);
+    }
+
+    &:focus-visible {
+        @include focus-ring;
+    }
+
+    &::placeholder {
+        color: map.get($colors, 'gray-2');
+    }
+
+    &:disabled {
+        background-color: map.get($colors, 'gray-5');
+        color: map.get($colors, 'gray-3');
+        cursor: not-allowed;
+    }
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+// ===== LAYOUT =====
+.container {
+    width: 100%;
+    max-width: $container-max-width;
+    margin: 0 auto;
+    padding: 0 8px;
+
+    @include mobile {
+        padding: 0 4px;
+    }
+}
+
+.container-fluid {
+    width: 100%;
+    padding: 0 8px;
+
+    @include mobile {
+        padding: 0 4px;
+    }
+}
+
+// ===== Доступность =====
+.sr-only {
+    @include visually-hidden;
+}
+
+.skip-link {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 1111;
+    padding: 4px 8px;
+    background: map.get($colors, 'gray-4');
+    color: map.get($colors, 'light');
+    border-radius: 8px;
+    transform: translateY(-100px);
+    transition: transform 0.1s ease;
+
+    &:focus {
+        transform: translateY(0);
+    }
+}
+
+// ===== SCROLL BEHAVIOR =====
+html {
+    scroll-padding-top: 8px;
+}
+
+// ===== SELECTION =====
+::selection {
+    background-color: map.get($colors, 'accent');
+    color: map.get($colors, 'dark');
+}
+
+// ===== Изобажения =====
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+// ===== Таблицы =====
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 6px 8px;
+    text-align: center;
+    border-bottom: 1px solid map.get($colors, 'gray-2');
+}
+
+th {
+    font-weight: map.get($font-weight, 'semibold');
+    background-color: map.get($colors, 'gray-5');
+}
+
+// ===== Списки =====
+ul,
+ol {
+    margin-bottom: 8px;
+}
+
+li {
+    margin-bottom: 4px;
+}
+
+// ===== Горизонтальная линия =====
+hr {
+    border: none;
+    height: 1px;
+    background-color: map.get($colors, 'gray-2');
+    margin: 30px 0;
+}
+
+// ===== Фокус =====
+.focus\:ring {
+    @include focus-ring;
+}

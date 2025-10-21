@@ -1,0 +1,285 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    padding: 16px;
+    background: map.get($colors, 'bg-5');
+    border-right: 1px solid map.get($colors, 'gray-4');
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
+    overflow-y: auto;
+    @include scrollbar(4px, map.get($colors, 'gray-3'), map.get($colors, 'bg-4'));
+
+    &--collapsed {
+        width: 64px;
+
+        .sidebar__nav-text,
+        .sidebar__user-details,
+        .sidebar__user-actions,
+        .sidebar__register-btn {
+            display: none;
+        }
+
+        .sidebar__nav-item {
+            justify-content: center;
+        }
+
+        .sidebar__add-btn,
+        .sidebar__settings-btn,
+        .sidebar__login-btn {
+            justify-content: center;
+        }
+
+        .sidebar__header,
+        .sidebar__user {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar__external-link {
+            justify-content: center;
+        }
+
+        .sidebar__login-btn {
+            padding: 0;
+        }
+
+        .sidebar__profile-settings {
+            transform: rotate(90deg);
+            transition: all 0.3 ease-in-out;
+            margin: 0;
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+    }
+
+    &__logo {
+        display: flex;
+        align-items: center;
+        width: 50px;
+
+        &:hover {
+            .custom-link__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__toggle {
+        padding: 0;
+
+        &:hover {
+            .btn__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__divider {
+        height: 1px;
+        background: map.get($colors, 'gray-4');
+        margin: 10px 0;
+    }
+
+    &__nav {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        flex: 1;
+    }
+
+    &__nav-item,
+    &__external-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: map.get($colors, light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        background: none;
+        cursor: pointer;
+
+        .custom-link__icon,
+        .sidebar__nav-icon {
+            width: 30px;
+        }
+
+        &:hover {
+            color: map.get($colors, accent);
+
+            .custom-link__icon,
+            .sidebar__nav-icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__nav-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: map.get($font-size, lg);
+    }
+
+    &__add-btn {
+        padding: 0;
+        justify-content: flex-start;
+        width: 100%;
+        height: 35px;
+        transition: all 0.1s easy;
+
+        .btn__icon {
+            width: 30px;
+        }
+
+        &:hover {
+            .btn__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__footer {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    &__settings-btn {
+        justify-content: flex-start;
+        padding: 0;
+
+        .btn__icon {
+            width: 30px;
+        }
+
+        &:hover {
+            .btn__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__user {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__user-info {
+        .custom-link__text {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 12px;
+        }
+    }
+
+    &__user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: map.get($colors, 'accent');
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    &__user-initials {
+        color: map.get($colors, 'dark');
+        font-weight: map.get($font-weight, 'bold');
+        font-size: map.get($font-size, 'sm');
+    }
+
+    &__user-details {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__user-name {
+        color: map.get($colors, 'light');
+        font-weight: map.get($font-weight, 'medium');
+        font-size: map.get($font-size, 'mid');
+        white-space: wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100px;
+    }
+
+    &__profile-settings {
+        display: flex;
+        padding: 0 10px;
+
+        &:hover {
+            .btn__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+
+    &__auth-buttons {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    &__login-btn,
+    &__register-btn {
+        width: 100%;
+
+        &:hover {
+            .btn__icon {
+                filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+            }
+        }
+    }
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+
+        &--mobile-open {
+            transform: translateX(0);
+        }
+    }
+}
+
+// Основной контент должен иметь отступ когда сайдбар открыт
+.main-content {
+    margin-left: 280px;
+    transition: margin-left 0.3s ease;
+
+    .sidebar--collapsed~& {
+        margin-left: 64px;
+    }
+
+    @media (max-width: 768px) {
+        margin-left: 0;
+    }
+}

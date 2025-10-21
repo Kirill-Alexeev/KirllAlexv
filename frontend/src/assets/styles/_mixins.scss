@@ -1,0 +1,234 @@
+@use 'sass:color';
+@use 'sass:map';
+
+// ===== FlexBox =====
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin flex-center-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@mixin flex-start {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+@mixin flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+// ===== Grid =====
+@mixin grid-center {
+    display: grid;
+    place-items: center;
+}
+
+@mixin grid-auto-fit($min-width: 250px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+    gap: 10px;
+}
+
+@mixin grid-auto-fill($min-width: 250px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($min-width, 1fr));
+    gap: 10px;
+}
+
+// ===== Позиционирование =====
+@mixin absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@mixin fixed-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+@mixin sticky-top($offset: 0) {
+    position: sticky;
+    top: $offset;
+    z-index: 1000;
+}
+
+// ===== Визуальные =====
+@mixin visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+// ===== Компоненты =====
+@mixin card($padding: 10px) {
+    background: var(--bg-primary, #fff);
+    border-radius: 8px;
+    padding: $padding;
+}
+
+// Обновите миксин scrollbar с современным синтаксисом
+@mixin scrollbar($size: 6px, $thumb-color: #666666, $track-color: transparent) {
+    &::-webkit-scrollbar {
+        width: $size;
+        height: $size;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $track-color;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $thumb-color;
+        border-radius: 9999px;
+
+        &:hover {
+            background: color.adjust($thumb-color, $lightness: 10%);
+        }
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: $thumb-color $track-color;
+}
+
+// ===== Анимации =====
+@mixin fade-in($duration: 0.3s) {
+    animation: fadeIn $duration ease-in;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+@mixin slide-in($direction: 'up', $duration: 0.3s) {
+    @if $direction =='up' {
+        animation: slideInUp $duration ease-out;
+    }
+
+    @else if $direction =='down' {
+        animation: slideInDown $duration ease-out;
+    }
+
+    @else if $direction =='left' {
+        animation: slideInLeft $duration ease-out;
+    }
+
+    @else if $direction =='right' {
+        animation: slideInRight $duration ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            transform: translateX(-20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+}
+
+// ===== Вспомогательные =====
+@mixin focus-ring($color: #94CB5A) {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+}
+
+// ===== Медиа-запросы =====
+@mixin mobile {
+    @media (max-width: 767px) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (min-width: 768px) and (max-width: 1199px) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: 1200px) {
+        @content;
+    }
+}

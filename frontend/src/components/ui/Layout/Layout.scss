@@ -1,0 +1,23 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+
+.layout {
+    min-height: 100vh;
+    background: map.get($colors, 'bg-4');
+}
+
+.main-content {
+    min-height: 100vh;
+    padding: 20px;
+    margin-left: 280px;
+    transition: margin-left 0.3s ease;
+
+    .sidebar--collapsed~& {
+        margin-left: 64px;
+    }
+
+    @media (max-width: 768px) {
+        margin-left: 0;
+        padding: 16px;
+    }
+}

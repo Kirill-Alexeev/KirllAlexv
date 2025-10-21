@@ -1,0 +1,76 @@
+// ===== Палитра цветов =====
+$colors: (
+    // Нейтральные цвета
+    light: #FBFAF8,
+    gray-1: #D6D6D6,
+    gray-2: #ADADAD,
+    gray-3: #666666,
+    gray-4: #484848,
+    gray-5: #292929,
+    dark: #040710,
+
+    // Акцентный
+    accent: #94CB5A,
+
+    // Семантические цвета
+    success: #5A7C36,
+    error: #AD0000,
+    info: #00B7FF,
+
+    // Тёмная тема
+    bg-1: #1E3885,
+    bg-2: #172A64,
+    bg-3: #132353,
+    bg-4: #101C42,
+    bg-5: #0A122A,
+);
+
+// ===== Типографика =====
+$font-family: (
+    primary: ('Montserrat', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif),
+    mono: ('Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace),
+    serif: ('ChironSungHK', 'Georgia', 'Times New Roman', serif)
+);
+
+$font-size: (
+    xs: 1.2rem,
+    // 12px
+    sm: 1.4rem,
+    // 14px
+    mid: 1.6rem,
+    // 16px
+    lg: 1.8rem,
+    // 18px
+    xl: 2rem,
+    // 20px
+    shl: 2.4rem,
+    // 24px
+    mhl: 3rem,
+    // 30px
+    lhl: 3.6rem,
+    // 36px
+    xlhl: 4.8rem // 48px
+);
+
+$font-weight: (
+    light: 300,
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+);
+
+$line-height: (
+    tight: 1.25,
+    normal: 1.5,
+    relaxed: 1.75
+);
+
+// ===== Адаптивность =====
+$breakpoints: (
+    small: 320px,
+    middle: 768px,
+    large: 1400px,
+);
+
+$container-max-width: 1200px;

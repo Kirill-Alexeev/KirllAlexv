@@ -5,7 +5,7 @@ import './Button.scss'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     size?: ButtonSize
     variant?: ButtonVariant
-    icon?: React.ReactNode
+    icon?: string
     children?: React.ReactNode
     loading?: boolean
 }
@@ -42,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
             {...props}
         >
             {loading && <div className="btn__spinner" />}
-            {icon && !loading && <span className="btn__icon">{icon}</span>}
+            {icon && !loading && <img className="btn__icon" src={icon} alt="Decorate"></img>}
             {children && <span className="btn__text">{children}</span>}
         </button>
     )

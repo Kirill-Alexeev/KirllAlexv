@@ -1,9 +1,12 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+
 .custom-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: none;
   background: none;
   cursor: pointer;
@@ -13,51 +16,43 @@
     text-decoration: none;
   }
 
-  // Sizes
+  // Размеры
   &--sm {
-    font-size: 14px;
+    font-size: map.get($font-size, sm);
   }
 
   &--md {
-    font-size: 16px;
+    font-size: map.get($font-size, mid);
   }
 
   &--lg {
-    font-size: 18px;
+    font-size: map.get($font-size, lg);
   }
 
-  // Variants
-  &--default {
-    color: #3b82f6;
-
-    &:hover {
-      color: #2563eb;
-    }
-  }
-
+  // Варианты
   &--primary {
-    color: #1f2937;
-    font-weight: 500;
+    color: map.get($colors, light);
 
     &:hover {
-      color: #3b82f6;
+      color: map.get($colors, accent);
     }
   }
 
   &--secondary {
-    color: #6b7280;
+    color: map.get($colors, dark);
 
     &:hover {
-      color: #374151;
+      color: map.get($colors, accent);
     }
   }
 
   &__icon {
     display: flex;
     align-items: center;
+    width: 100%;
   }
 
   &__text {
-    line-height: 1;
+    line-height: map.get($line-height, normal);
   }
 }

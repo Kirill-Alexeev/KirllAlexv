@@ -6,7 +6,7 @@ import './Link.scss'
 interface LinkProps {
     to: string
     size?: ButtonSize
-    icon?: React.ReactNode
+    icon?: string
     children?: React.ReactNode
     className?: string
     variant?: 'default' | 'primary' | 'secondary'
@@ -33,7 +33,7 @@ export const Link: React.FC<LinkProps> = ({
 
     return (
         <RouterLink to={to} className={classes}>
-            {icon && <span className="custom-link__icon">{icon}</span>}
+            {icon && <img className="custom-link__icon" src={icon} alt="decorate"></img>}
             {children && <span className="custom-link__text">{children}</span>}
         </RouterLink>
     )
