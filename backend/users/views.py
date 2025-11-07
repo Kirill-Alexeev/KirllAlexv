@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout
 from django.middleware.csrf import get_token
+from django.db import transaction
 from .models import User
 from .serializers import (
     UserSerializer, UserCreateSerializer, UserUpdateSerializer,
@@ -93,6 +94,32 @@ def change_password(request):
         request.user.save()
         return Response({'detail': 'Пароль успешно изменен'})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_account(request):
+    """Удаление аккаунта пользователя"""
+    try:
+        with transaction.atomic():
+            user = request.user
+
+            Token.objects.filter(user=user).delete()
+
+            logout(request)
+
+            user_id = user.id
+            user.delete()
+
+            return Response(
+                {'detail': 'Аккаунт успешно удален'},
+                status=status.HTTP_200_OK
+            )
+
+    except Exception as e:
+        return Response(
+            {'detail': f'Ошибка при удалении аккаунта: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 @api_view(['GET'])

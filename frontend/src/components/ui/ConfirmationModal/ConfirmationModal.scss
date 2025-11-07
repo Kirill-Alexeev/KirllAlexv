@@ -1,0 +1,37 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.confirmation-modal {
+    @include flex-column;
+    gap: 20px;
+}
+
+.confirmation-modal__title {
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+    margin: 0;
+    text-align: center;
+}
+
+.confirmation-modal__description {
+    color: map.get($colors, gray-2);
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.confirmation-modal__footer {
+    @include flex-center;
+    gap: 12px;
+
+    @include mobile {
+        @include flex-column;
+        width: 100%;
+
+        button {
+            width: 100%;
+        }
+    }
+}

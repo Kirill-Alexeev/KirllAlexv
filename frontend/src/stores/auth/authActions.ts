@@ -62,3 +62,42 @@ export const checkAuth = () => async (dispatch: Dispatch) => {
         }
     }
 }
+
+export const deleteAccount = () => async (dispatch: Dispatch) => {
+    try {
+        dispatch(setLoading(true))
+        dispatch(setError(null))
+
+        await authApi.deleteAccount()
+
+        // Очищаем локальные данные
+        dispatch(logout())
+
+        // Очищаем localStorage
+        const keysToRemove = [
+            'authToken',
+            'user',
+            'userPreferences',
+            'tasks',
+            'notes',
+            'books',
+            'workouts',
+            'budget',
+            'sidebarState',
+            'theme'
+        ]
+
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key)
+        })
+
+        sessionStorage.clear()
+
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.detail || 'Ошибка при удалении аккаунта'
+        dispatch(setError(errorMessage))
+        throw error
+    } finally {
+        dispatch(setLoading(false))
+    }
+}

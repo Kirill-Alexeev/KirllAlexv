@@ -1,0 +1,102 @@
+@use 'sass:map';
+@use '../../../../assets/styles/variables' as *;
+@use '../../../../assets/styles/mixins' as *;
+
+.add-action__description {
+    color: map-get($colors, gray-2);
+    margin-bottom: 20px;
+    font-size: map-get($font-size, sm);
+}
+
+.add-action__list {
+    @include flex-column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.add-action__item {
+    @include flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid map-get($colors, gray-4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(.add-action__item--disabled) {
+        border-color: map-get($colors, accent);
+        background: rgba(map-get($colors, accent), 0.05);
+    }
+
+    &--selected {
+        border-color: map-get($colors, accent);
+        background: rgba(map-get($colors, accent), 0.1);
+    }
+
+    &--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.add-action__checkbox {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.add-action__checkbox-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.add-action__checkbox-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid map-get($colors, gray-3);
+    border-radius: 4px;
+    background: map-get($colors, bg-4);
+    transition: all 0.2s ease;
+    font-size: 12px;
+    color: transparent;
+}
+
+.add-action__item--selected .add-action__checkbox-custom {
+    border-color: map-get($colors, accent);
+    background: map-get($colors, accent);
+    color: map-get($colors, dark);
+}
+
+.add-action__icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.add-action__content {
+    @include flex-between;
+    flex: 1;
+}
+
+.add-action__label {
+    font-weight: map-get($font-weight, medium);
+    color: map-get($colors, light);
+}
+
+.add-action__badge {
+    background: map-get($colors, gray-4);
+    color: map-get($colors, gray-2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: map-get($font-size, xs);
+    font-weight: map-get($font-weight, medium);
+}
+
+.add-action__footer {
+    @include flex-end;
+    gap: 12px;
+}

@@ -74,4 +74,7 @@ export const authApi = {
         new_password: string
         new_password_confirm: string
     }) => api.post('/auth/change-password/', data),
+
+    // Удаление аккаунта
+    deleteAccount: () => api.delete<{ detail: string }>('/auth/account/delete/'),
 }

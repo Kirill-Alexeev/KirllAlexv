@@ -1,0 +1,150 @@
+@use 'sass:map';
+@use '../../../../assets/styles/variables' as *;
+@use '../../../../assets/styles/mixins' as *;
+
+.app-settings {
+    @include flex-column;
+    gap: 32px;
+}
+
+.app-settings__section {
+    @include flex-column;
+    gap: 16px;
+}
+
+.app-settings__section-title {
+    font-size: map-get($font-size, lg);
+    font-weight: map-get($font-weight, semibold);
+    color: map-get($colors, light);
+    margin: 0;
+}
+
+.app-settings__options {
+    @include flex-column;
+    gap: 8px;
+}
+
+.app-settings__option {
+    @include flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid map-get($colors, gray-4);
+    border-radius: 8px;
+    background: transparent;
+    color: map-get($colors, light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: map-get($colors, gray-4);
+        border-color: map-get($colors, gray-3);
+    }
+
+    &--selected {
+        border-color: map-get($colors, accent);
+        background: rgba(map-get($colors, accent), 0.1);
+
+        &:hover {
+            background: rgba(map-get($colors, accent), 0.15);
+        }
+    }
+}
+
+.app-settings__option-icon {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.app-settings__option-label {
+    font-weight: map-get($font-weight, medium);
+    flex: 1;
+}
+
+.app-settings__additional {
+    @include flex-column;
+    gap: 12px;
+}
+
+.app-settings__additional-item {
+    @include flex-between;
+    padding: 12px 0;
+    border-bottom: 1px solid map-get($colors, gray-4);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.app-settings__additional-label {
+    font-weight: map-get($font-weight, medium);
+    color: map-get($colors, light);
+}
+
+.app-settings__toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.app-settings__toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.app-settings__toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: map-get($colors, gray-4);
+    transition: .2s;
+    border-radius: 24px;
+
+    &:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: map-get($colors, light);
+        transition: .2s;
+        border-radius: 50%;
+    }
+}
+
+.app-settings__toggle input:checked+.app-settings__toggle-slider {
+    background-color: map-get($colors, accent);
+}
+
+.app-settings__toggle input:checked+.app-settings__toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.app-settings__footer {
+    @include flex-end;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid map-get($colors, gray-4);
+}
+
+// Адаптивность
+@include mobile {
+    .app-settings {
+        gap: 24px;
+    }
+
+    .app-settings__option {
+        padding: 14px;
+    }
+
+    .app-settings__section-title {
+        font-size: map-get($font-size, mid);
+    }
+}
