@@ -1,0 +1,103 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.about {
+    margin: 0 0 80px;
+    padding: 20px 0 0;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 700px;
+        height: 100%;
+        max-height: 600px;
+        background: radial-gradient(circle,
+                rgba(map.get($colors, accent), 0.2) 0%,
+                rgba(map.get($colors, accent), 0.05) 40%,
+                transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+.about__content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.about__icon {
+    margin-bottom: 30px;
+    width: 300px;
+}
+
+.about__description {
+    font-size: map.get($font-size, xl);
+    color: map.get($colors, gray-2);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.about__features {
+    @include flex-center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.about__feature {
+    @include flex-center;
+    gap: 8px;
+    color: map.get($colors, light);
+    font-weight: map.get($font-weight, medium);
+}
+
+.about__feature-icon {
+    font-size: 20px;
+}
+
+// Адаптивность
+@include tablet {
+    .about {
+        padding: 0 0 60px;
+    }
+
+    .about__title {
+        font-size: map.get($font-size, '4xl');
+    }
+
+    .about__description {
+        font-size: map.get($font-size, lg);
+    }
+}
+
+@include mobile {
+    .about {
+        padding: 0 0 40px;
+    }
+
+    .about__title {
+        font-size: map.get($font-size, '3xl');
+    }
+
+    .about__description {
+        font-size: map.get($font-size, mid);
+    }
+
+    .about__features {
+        gap: 24px;
+        flex-direction: column;
+    }
+}

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Modal } from '@/components/ui/Modal/Modal'
 import { Button } from '@/components/ui/Button/Button'
+import darkThemeIcon from "../../../../assets/icons/dark-theme.svg"
+import lightThemeIcon from "../../../../assets/icons/light-theme.svg"
 import './AppSettings.scss'
 
 interface AppSettingsProps {
@@ -9,13 +11,12 @@ interface AppSettingsProps {
 }
 
 export const AppSettings: React.FC<AppSettingsProps> = ({ isOpen, onClose }) => {
-    const [theme, setTheme] = useState<'dark' | 'light' | 'auto'>('dark')
+    const [theme, setTheme] = useState<'dark' | 'light'>('dark')
     const [language, setLanguage] = useState<'ru' | 'en'>('ru')
     const [notifications, setNotifications] = useState(true)
-    const [autoSave, setAutoSave] = useState(true)
 
     const handleSave = () => {
-        console.log('Settings saved:', { theme, language, notifications, autoSave })
+        console.log('Settings saved:', { theme, language, notifications })
         // Здесь будет логика сохранения настроек
         onClose()
     }
@@ -32,9 +33,8 @@ export const AppSettings: React.FC<AppSettingsProps> = ({ isOpen, onClose }) => 
                     <h3 className="app-settings__section-title">Тема</h3>
                     <div className="app-settings__options">
                         {[
-                            { value: 'dark', label: 'Тёмная', icon: '🌙' },
-                            { value: 'light', label: 'Светлая', icon: '☀️' },
-                            { value: 'auto', label: 'Системная', icon: '⚙️' }
+                            { value: 'dark', label: 'Тёмная', icon: darkThemeIcon },
+                            { value: 'light', label: 'Светлая', icon: lightThemeIcon },
                         ].map(option => (
                             <div
                                 key={option.value}
@@ -42,7 +42,7 @@ export const AppSettings: React.FC<AppSettingsProps> = ({ isOpen, onClose }) => 
                                     }`}
                                 onClick={() => setTheme(option.value as any)}
                             >
-                                <span className="app-settings__option-icon">{option.icon}</span>
+                                <img className="app-settings__option-icon" src={option.icon} alt={option.label} />
                                 <span className="app-settings__option-label">{option.label}</span>
                             </div>
                         ))}
@@ -79,17 +79,6 @@ export const AppSettings: React.FC<AppSettingsProps> = ({ isOpen, onClose }) => 
                                     type="checkbox"
                                     checked={notifications}
                                     onChange={(e) => setNotifications(e.target.checked)}
-                                />
-                                <span className="app-settings__toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div className="app-settings__additional-item">
-                            <span className="app-settings__additional-label">Автосохранение</span>
-                            <label className="app-settings__toggle">
-                                <input
-                                    type="checkbox"
-                                    checked={autoSave}
-                                    onChange={(e) => setAutoSave(e.target.checked)}
                                 />
                                 <span className="app-settings__toggle-slider"></span>
                             </label>

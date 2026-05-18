@@ -1,0 +1,163 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.apps {
+    margin: 0 0 80px;
+    padding: 20px 0;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 1000px;
+        height: 100%;
+        max-height: 1000px;
+        background: radial-gradient(circle,
+                rgba(map.get($colors, accent), 0.2) 0%,
+                rgba(map.get($colors, accent), 0.05) 40%,
+                transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+.apps__title {
+    font-size: map.get($font-size, '4xl');
+    font-weight: map.get($font-weight, bold);
+    text-align: center;
+    color: map.get($colors, light);
+    margin-bottom: 30px;
+    z-index: 1;
+}
+
+.apps__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.apps__card {
+    background: rgba(map.get($colors, bg-4), 0.8);
+    border-radius: 20px;
+    padding: 0;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    &--disabled {
+        opacity: 0.7;
+
+        &:hover {
+            transform: none;
+            border-color: rgba(map.get($colors, gray-4), 0.3);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.apps__card-header {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.apps__screenshot {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, map.get($colors, gray-5), map.get($colors, gray-4));
+}
+
+.apps__screenshot-placeholder {
+    @include flex-center-column;
+    width: 100%;
+    height: 100%;
+    gap: 12px;
+    color: map.get($colors, gray-2);
+}
+
+.apps__screenshot-icon {
+    font-size: 48px;
+    opacity: 0.7;
+}
+
+.apps__screenshot-text {
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, medium);
+}
+
+.apps__status {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 6px 12px;
+    background: rgba(map.get($colors, accent), 0.9);
+    color: map.get($colors, dark);
+    border-radius: 12px;
+    font-size: map.get($font-size, xs);
+    font-weight: map.get($font-weight, bold);
+    backdrop-filter: blur(10px);
+}
+
+.apps__card-content {
+    height: 100%;
+    padding: 24px;
+    background-color: map.get($colors, bg-2);
+}
+
+.apps__card-title {
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+    margin-bottom: 8px;
+}
+
+.apps__card-description {
+    color: map.get($colors, gray-2);
+    line-height: 1.5;
+    margin: 0;
+}
+
+// Адаптивность
+@include tablet {
+    .apps__grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}
+
+@include mobile {
+    .apps {
+        padding: 60px 0;
+    }
+
+    .apps__title {
+        font-size: map.get($font-size, '3xl');
+    }
+
+    .apps__subtitle {
+        font-size: map.get($font-size, mid);
+        margin-bottom: 40px;
+    }
+
+    .apps__grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .apps__card-header {
+        height: 160px;
+    }
+}

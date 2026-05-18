@@ -6,6 +6,8 @@ import { ConfirmationModal } from '@/components/ui/ConfirmationModal/Confirmatio
 import { logout } from '@/stores/auth/authSlice'
 import { deleteAccount } from '@/stores/auth/authActions'
 import { RootState } from '@/stores'
+import trashIcon from "../../../../assets/icons/trash.svg";
+import logoutIcon from "../../../../assets/icons/log-out.svg";
 import './ProfileSettings.scss'
 
 interface ProfileSettingsProps {
@@ -25,7 +27,6 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleteError, setDeleteError] = useState<string | null>(null)
 
-    // Очищаем ошибки при открытии/закрытии модалки
     useEffect(() => {
         if (isOpen) {
             setDeleteError(null)
@@ -43,7 +44,7 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
         setDeleteError(null)
         try {
             // @ts-ignore - TypeScript временно
-            await dispatch(deleteAccount())
+            dispatch(deleteAccount())
             navigate('/')
             setShowDeleteConfirm(false)
             onClose()
@@ -74,14 +75,13 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                     )}
 
                     <div className="profile-settings__section">
-                        <h3 className="profile-settings__section-title">Действия</h3>
                         <div className="profile-settings__actions">
                             <button
                                 className="profile-settings__action profile-settings__action--logout"
                                 onClick={() => setShowLogoutConfirm(true)}
                                 disabled={isLoading}
                             >
-                                <span className="profile-settings__action-icon">🚪</span>
+                                <img className="profile-settings__action-icon" src={logoutIcon} alt="Выход из аккаунта" />
                                 <span className="profile-settings__action-text">Выйти из аккаунта</span>
                             </button>
 
@@ -90,18 +90,12 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                                 onClick={() => setShowDeleteConfirm(true)}
                                 disabled={isLoading}
                             >
-                                <span className="profile-settings__action-icon">🗑️</span>
+                                <img className="profile-settings__action-icon" src={trashIcon} alt="Удалить аккаунт" />
                                 <span className="profile-settings__action-text">
                                     Удалить аккаунт
                                 </span>
                             </button>
                         </div>
-                    </div>
-
-                    <div className="profile-settings__info">
-                        <p className="profile-settings__warning">
-                            ⚠️ Удаление аккаунта невозможно отменить. Все ваши данные будут безвозвратно удалены из системы.
-                        </p>
                     </div>
                 </div>
             </Modal>
@@ -122,8 +116,8 @@ export const ProfileSettings: React.FC<ProfileSettingsProps> = ({
                 onClose={handleCloseDeleteConfirm}
                 onConfirm={handleDeleteAccount}
                 title="Удаление аккаунта"
-                description="Это действие невозможно отменить. Все ваши данные будут удалены без возможности восстановления."
-                confirmText={isLoading ? "Удаление..." : "Удалить аккаунт"}
+                description="Это действие невозможно отменить! Все ваши данные будут удалены навсегда."
+                confirmText={isLoading ? "Удаление..." : "Удалить"}
                 variant="danger"
                 isLoading={isLoading}
             />

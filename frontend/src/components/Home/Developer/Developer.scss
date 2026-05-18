@@ -1,0 +1,123 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.developer {
+    margin: 0 0 80px;
+    padding: 20px 0;
+}
+
+.developer__content {
+    @include flex-between;
+    gap: 60px;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.developer__info {
+    flex: 1;
+}
+
+.developer__title {
+    font-size: map.get($font-size, '3xl');
+    font-weight: map.get($font-weight, bold);
+    color: map.get($colors, light);
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, map.get($colors, accent), map.get($colors, info));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.developer__description {
+    font-size: map.get($font-size, lg);
+    color: map.get($colors, gray-2);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.developer__section {
+    @include flex-column;
+    gap: 20px;
+}
+
+.developer__contacts {
+    @include flex-column;
+    gap: 12px;
+}
+
+.developer__contact-title {
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+    margin: 0;
+}
+
+.developer__contact {
+    @include flex-start;
+    gap: 8px;
+    color: map.get($colors, gray-2);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: map.get($colors, light);
+    }
+
+    &:focus-within {
+        color: map.get($colors, gray-2);
+    }
+}
+
+.developer__contact-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.developer__contact-text {
+    font-size: map.get($font-size, sm);
+}
+
+.developer__photo {
+    flex-shrink: 0;
+    display: flex;
+}
+
+.developer__photo-img {
+    display: block;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    @include flex-center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    box-shadow: 0 0 100px rgba(map.get($colors, accent), 0.5);
+}
+
+// Адаптивность
+@include tablet {
+    .developer__content {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .developer__features {
+        align-items: center;
+    }
+}
+
+@include mobile {
+    .developer {
+        padding: 60px 0;
+    }
+
+    .developer__title {
+        font-size: map.get($font-size, '2xl');
+    }
+
+    .developer__description {
+        font-size: map.get($font-size, mid);
+    }
+}

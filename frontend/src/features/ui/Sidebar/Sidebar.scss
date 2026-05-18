@@ -115,7 +115,11 @@
 
         .custom-link__icon,
         .sidebar__nav-icon {
-            width: 30px;
+            width: 24px;
+        }
+
+        &:focus-within {
+            color: map.get($colors, light);
         }
 
         &:hover {
@@ -132,7 +136,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: map.get($font-size, lg);
+        font-size: map.get($font-size, md);
     }
 
     &__add-btn {
@@ -143,7 +147,7 @@
         transition: all 0.1s easy;
 
         .btn__icon {
-            width: 30px;
+            width: 24px;
         }
 
         &:hover {
@@ -164,7 +168,7 @@
         padding: 0;
 
         .btn__icon {
-            width: 30px;
+            width: 24px;
         }
 
         &:hover {
@@ -231,7 +235,7 @@
 
     &__profile-settings {
         display: flex;
-        padding: 0 10px;
+        padding: 0;
 
         &:hover {
             .btn__icon {

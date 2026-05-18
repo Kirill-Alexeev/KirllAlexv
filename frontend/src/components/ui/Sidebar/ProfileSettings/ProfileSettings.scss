@@ -13,9 +13,9 @@
 }
 
 .profile-settings__section-title {
-    font-size: map-get($font-size, lg);
-    font-weight: map-get($font-weight, semibold);
-    color: map-get($colors, light);
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
     margin: 0;
 }
 
@@ -29,38 +29,33 @@
     gap: 12px;
     width: 100%;
     padding: 16px;
-    border: 1px solid map-get($colors, gray-4);
+    border: 1px solid map.get($colors, gray-4);
     border-radius: 8px;
     background: transparent;
-    color: map-get($colors, light);
+    color: map.get($colors, light);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: map-get($font-size, mid);
+    font-size: map.get($font-size, mid);
 
     &:hover {
-        background: map-get($colors, gray-4);
-        transform: translateY(-1px);
-    }
-
-    &:active {
-        transform: translateY(0);
+        background: map.get($colors, gray-4);
     }
 
     &--logout {
-        border-color: map-get($colors, info);
+        border-color: map.get($colors, info);
 
         &:hover {
-            background: rgba(map-get($colors, info), 0.1);
-            border-color: map-get($colors, info);
+            background: rgba(map.get($colors, info), 0.2);
+            border-color: map.get($colors, info);
         }
     }
 
     &--delete {
-        border-color: map-get($colors, error);
+        border-color: map.get($colors, error);
 
         &:hover {
-            background: rgba(map-get($colors, error), 0.1);
-            border-color: map-get($colors, error);
+            background: rgba(map.get($colors, error), 0.2);
+            border-color: map.get($colors, error);
         }
 
         &:disabled {
@@ -83,33 +78,26 @@
 }
 
 .profile-settings__action-text {
-    font-weight: map-get($font-weight, medium);
+    font-weight: map.get($font-weight, medium);
     flex: 1;
     text-align: left;
 }
 
-.profile-settings__info {
-    padding: 16px;
-    background: rgba(map-get($colors, error), 0.1);
-    border: 1px solid rgba(map-get($colors, error), 0.3);
-    border-radius: 8px;
-}
-
 .profile-settings__warning {
     margin: 0;
-    font-size: map-get($font-size, sm);
-    color: map-get($colors, gray-2);
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-1);
     line-height: 1.5;
     text-align: center;
 }
 
 .profile-settings__error {
     padding: 12px 16px;
-    background: rgba(map-get($colors, error), 0.1);
-    border: 1px solid map-get($colors, error);
+    background: rgba(map.get($colors, error), 0.1);
+    border: 1px solid map.get($colors, error);
     border-radius: 8px;
-    color: map-get($colors, error);
-    font-size: map-get($font-size, sm);
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
     text-align: center;
     line-height: 1.4;
 }
@@ -122,10 +110,10 @@
 
     .profile-settings__action {
         padding: 14px;
-        font-size: map-get($font-size, sm);
+        font-size: map.get($font-size, sm);
     }
 
     .profile-settings__section-title {
-        font-size: map-get($font-size, mid);
+        font-size: map.get($font-size, mid);
     }
 }

@@ -11,7 +11,7 @@ import calendarIcon from "../../../assets/icons/calendar.svg";
 import addIcon from "../../../assets/icons/add.svg";
 import settingsIcon from "../../../assets/icons/settings.svg";
 import gitHubIcon from "../../../assets/icons/github.svg";
-import profileSettingsIcon from "../../../assets/icons/profile-settings.svg";
+import profileSettingsIcon from "../../../assets/icons/more.svg";
 import logInIcon from "../../../assets/icons/log-in.svg";
 import { AddAction } from '@/components/ui/Sidebar/AddAction/AddAction'
 import { AppSettings } from '@/components/ui/Sidebar/AppSettings/AppSettings'
@@ -35,7 +35,7 @@ export const Sidebar: React.FC = () => {
                     </Link>
                     <Button
                         variant="ghost"
-                        size="lg"
+                        size="md"
                         icon={!isCollapsed ? sidebarCloseIcon : sidebarOpenIcon}
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         className="sidebar__toggle"
@@ -46,17 +46,17 @@ export const Sidebar: React.FC = () => {
 
                 {/* Основная навигация */}
                 <nav className="sidebar__nav">
-                    <Link to="/notifications" size='lg' icon={notificationOnIcon} className="sidebar__nav-item">
+                    <Link to="/notifications" size='md' icon={notificationOnIcon} className="sidebar__nav-item">
                         {!isCollapsed && <span className="sidebar__nav-text">Уведомления</span>}
                     </Link>
 
-                    <Link to="/calendar" size='lg' icon={calendarIcon} className="sidebar__nav-item">
+                    <Link to="/calendar" size='md' icon={calendarIcon} className="sidebar__nav-item">
                         {!isCollapsed && <span className="sidebar__nav-text">Календарь</span>}
                     </Link>
 
                     <Button
                         variant="ghost"
-                        size="lg"
+                        size="md"
                         icon={addIcon}
                         onClick={() => setShowAddAction(true)}
                         className="sidebar__add-btn"
@@ -81,7 +81,7 @@ export const Sidebar: React.FC = () => {
 
                     <Button
                         variant="ghost"
-                        size="lg"
+                        size="md"
                         icon={settingsIcon}
                         onClick={() => setShowAppSettings(true)}
                         className="sidebar__settings-btn"
@@ -127,7 +127,7 @@ export const Sidebar: React.FC = () => {
                         <div className="sidebar__auth-buttons">
                             <Button
                                 variant={!isCollapsed ? 'primary' : 'ghost'}
-                                size="lg"
+                                size="md"
                                 icon={!isCollapsed ? '' : logInIcon}
                                 onClick={() => navigate('/auth/login')}
                                 className="sidebar__login-btn"
@@ -137,7 +137,7 @@ export const Sidebar: React.FC = () => {
                             {!isCollapsed && (
                                 <Button
                                     variant="outline"
-                                    size="lg"
+                                    size="md"
                                     onClick={() => navigate('/auth/register')}
                                     className="sidebar__register-btn"
                                 >

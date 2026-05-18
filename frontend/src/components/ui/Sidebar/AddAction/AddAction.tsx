@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
 import { Modal } from '@/components/ui/Modal/Modal'
 import { Button } from '@/components/ui/Button/Button'
+import checkboxIcon from "../../../../assets/icons/check-mark.svg";
 import './AddAction.scss'
 
 interface AddActionProps {
@@ -9,33 +9,17 @@ interface AddActionProps {
 }
 
 const availableActions = [
-    { id: 'task', label: 'Задача', icon: '✓', enabled: true },
-    { id: 'event', label: 'Событие', icon: '📅', enabled: true },
-    { id: 'note', label: 'Заметка', icon: '📝', enabled: false },
-    { id: 'book', label: 'Книга', icon: '📚', enabled: false },
-    { id: 'workout', label: 'Тренировка', icon: '💪', enabled: false },
-    { id: 'expense', label: 'Расход', icon: '💰', enabled: false },
+    { id: 'task', label: 'Задача', icon: '', enabled: true },
+    { id: 'event', label: 'Событие', icon: '', enabled: true },
+    { id: 'note', label: 'Заметка', icon: '', enabled: false },
+    { id: 'book', label: 'Книга', icon: '', enabled: false },
+    { id: 'workout', label: 'Тренировка', icon: '', enabled: false },
+    { id: 'expense', label: 'Расход', icon: '', enabled: false },
 ]
 
 export const AddAction: React.FC<AddActionProps> = ({ isOpen, onClose }) => {
-    const [selectedActions, setSelectedActions] = useState<Set<string>>(
-        new Set(['task', 'event'])
-    )
-
-    const handleToggleAction = (actionId: string) => {
-        setSelectedActions(prev => {
-            const newSet = new Set(prev)
-            if (newSet.has(actionId)) {
-                newSet.delete(actionId)
-            } else {
-                newSet.add(actionId)
-            }
-            return newSet
-        })
-    }
-
     const handleSave = () => {
-        console.log('Selected actions:', Array.from(selectedActions))
+        console.log('Selected actions:')
         // Здесь будет логика сохранения выбранных действий
         onClose()
     }
@@ -56,21 +40,17 @@ export const AddAction: React.FC<AddActionProps> = ({ isOpen, onClose }) => {
                     {availableActions.map(action => (
                         <div
                             key={action.id}
-                            className={`add-action__item ${selectedActions.has(action.id) ? 'add-action__item--selected' : ''
-                                } ${!action.enabled ? 'add-action__item--disabled' : ''}`}
-                            onClick={() => action.enabled && handleToggleAction(action.id)}
+                            className={`add-action__item ${!action.enabled ? 'add-action__item--disabled' : ''}`}
                         >
                             <div className="add-action__checkbox">
                                 <input
                                     type="checkbox"
-                                    checked={selectedActions.has(action.id)}
+                                    checked={false}
                                     onChange={() => { }}
                                     disabled={!action.enabled}
                                     className="add-action__checkbox-input"
                                 />
-                                <span className="add-action__checkbox-custom">
-                                    {selectedActions.has(action.id) && '✓'}
-                                </span>
+                                <img className="add-action__checkbox-custom" src={checkboxIcon} alt="" />
                             </div>
 
                             <span className="add-action__icon">{action.icon}</span>

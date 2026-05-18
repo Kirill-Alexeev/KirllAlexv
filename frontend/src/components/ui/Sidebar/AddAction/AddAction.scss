@@ -3,9 +3,9 @@
 @use '../../../../assets/styles/mixins' as *;
 
 .add-action__description {
-    color: map-get($colors, gray-2);
+    color: map.get($colors, gray-2);
     margin-bottom: 20px;
-    font-size: map-get($font-size, sm);
+    font-size: map.get($font-size, sm);
 }
 
 .add-action__list {
@@ -19,18 +19,18 @@
     gap: 12px;
     padding: 12px 16px;
     border-radius: 8px;
-    border: 1px solid map-get($colors, gray-4);
+    border: 1px solid map.get($colors, gray-4);
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover:not(.add-action__item--disabled) {
-        border-color: map-get($colors, accent);
-        background: rgba(map-get($colors, accent), 0.05);
+        border-color: map.get($colors, accent);
+        background: rgba(map.get($colors, accent), 0.05);
     }
 
     &--selected {
-        border-color: map-get($colors, accent);
-        background: rgba(map-get($colors, accent), 0.1);
+        border-color: map.get($colors, accent);
+        background: rgba(map.get($colors, accent), 0.1);
     }
 
     &--disabled {
@@ -56,18 +56,18 @@
     justify-content: center;
     width: 20px;
     height: 20px;
-    border: 2px solid map-get($colors, gray-3);
+    border: 2px solid map.get($colors, gray-3);
     border-radius: 4px;
-    background: map-get($colors, bg-4);
+    background: map.get($colors, bg-4);
     transition: all 0.2s ease;
     font-size: 12px;
     color: transparent;
 }
 
 .add-action__item--selected .add-action__checkbox-custom {
-    border-color: map-get($colors, accent);
-    background: map-get($colors, accent);
-    color: map-get($colors, dark);
+    border-color: map.get($colors, accent);
+    background: map.get($colors, accent);
+    color: map.get($colors, dark);
 }
 
 .add-action__icon {
@@ -83,17 +83,17 @@
 }
 
 .add-action__label {
-    font-weight: map-get($font-weight, medium);
-    color: map-get($colors, light);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
 }
 
 .add-action__badge {
-    background: map-get($colors, gray-4);
-    color: map-get($colors, gray-2);
+    background: map.get($colors, gray-4);
+    color: map.get($colors, gray-2);
     padding: 2px 8px;
     border-radius: 12px;
-    font-size: map-get($font-size, xs);
-    font-weight: map-get($font-weight, medium);
+    font-size: map.get($font-size, xs);
+    font-weight: map.get($font-weight, medium);
 }
 
 .add-action__footer {

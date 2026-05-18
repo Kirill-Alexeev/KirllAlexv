@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '../Button/Button'
+import closeButton from "../../../assets/icons/close.svg"
 import './Modal.scss'
 
 interface ModalProps {
@@ -80,7 +81,7 @@ export const Modal: React.FC<ModalProps> = ({
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                icon="✕"
+                                icon={closeButton}
                                 onClick={onClose}
                                 className="modal__close-btn"
                                 aria-label="Закрыть модальное окно"
