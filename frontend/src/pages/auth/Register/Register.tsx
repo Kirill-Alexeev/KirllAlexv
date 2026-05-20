@@ -70,6 +70,17 @@ export const Register: React.FC = () => {
                             value={formData.first_name}
                             onChange={handleChange}
                         />
+
+                        <Input
+                            type="email"
+                            name="email"
+                            label="Email"
+                            placeholder="Введите ваш email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+
                         <Input
                             type="text"
                             name="last_name"
@@ -78,56 +89,48 @@ export const Register: React.FC = () => {
                             value={formData.last_name}
                             onChange={handleChange}
                         />
+
+                        <Input
+                            type="text"
+                            name="phone"
+                            label="Телефон"
+                            placeholder="Введите ваш телефон"
+                            value={formData.phone}
+                            onChange={handleChange}
+                        />
+
+                        <Input
+                            type="text"
+                            name="username"
+                            label="Логин"
+                            placeholder="Введите логин"
+                            value={formData.username}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <Input
+                            type="password"
+                            name="password"
+                            label="Пароль"
+                            placeholder="Введите пароль"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <div></div>
+
+                        <Input
+                            type="password"
+                            name="password_confirm"
+                            label="Подтверждение пароля"
+                            placeholder="Повторите пароль"
+                            value={formData.password_confirm}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-
-                    <Input
-                        type="text"
-                        name="username"
-                        label="Имя пользователя"
-                        placeholder="Введите имя пользователя"
-                        value={formData.username}
-                        onChange={handleChange}
-                        required
-                    />
-
-                    <Input
-                        type="email"
-                        name="email"
-                        label="Email"
-                        placeholder="Введите ваш email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-
-                    <Input
-                        type="text"
-                        name="phone"
-                        label="Телефон"
-                        placeholder="Введите ваш телефон"
-                        value={formData.phone}
-                        onChange={handleChange}
-                    />
-
-                    <Input
-                        type="password"
-                        name="password"
-                        label="Пароль"
-                        placeholder="Введите пароль"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-
-                    <Input
-                        type="password"
-                        name="password_confirm"
-                        label="Подтверждение пароля"
-                        placeholder="Повторите пароль"
-                        value={formData.password_confirm}
-                        onChange={handleChange}
-                        required
-                    />
 
                     <Button
                         type="submit"

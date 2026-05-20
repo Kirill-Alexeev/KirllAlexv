@@ -44,7 +44,7 @@ export const Login: React.FC = () => {
         <div className="auth-page">
             <div className="auth-container">
                 <div className="auth-header">
-                    <h1 className="auth-title">Вход в систему</h1>
+                    <h1 className="auth-title">Вход</h1>
                     <p className="auth-subtitle">Введите ваши учетные данные</p>
                 </div>
 
@@ -78,7 +78,7 @@ export const Login: React.FC = () => {
                     <Button
                         type="submit"
                         variant="primary"
-                        size="lg"
+                        size="md"
                         loading={isLoading}
                         className="auth-submit-btn"
                     >
