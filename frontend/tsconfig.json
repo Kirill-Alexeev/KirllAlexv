@@ -19,32 +19,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "src",
     "paths": {
       "@/*": [
-        "./*"
-      ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/pages/*": [
-        "./pages/*"
-      ],
-      "@/utils/*": [
-        "./utils/*"
-      ],
-      "@/types/*": [
-        "./types/*"
-      ],
-      "@/api/*": [
-        "./api/*"
-      ],
-      "@/stores/*": [
-        "./stores/*"
+        "./src/*"
       ]
     }
   },
   "include": [
     "src"
-  ],
+  ]
 }
