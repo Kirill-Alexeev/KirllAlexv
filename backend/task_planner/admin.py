@@ -138,7 +138,7 @@ class TaskAdmin(admin.ModelAdmin):
     filter_horizontal = ['assignees', 'tags']
 
     inlines = [SubtaskInline, CommentInline]
-    
+
     raw_id_fields = ['owner', 'workspace']
 
     list_per_page = 25
@@ -178,7 +178,7 @@ class SubtaskAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ['created_at']
-    
+
     raw_id_fields = ['parent_task', 'assignee']
 
     fieldsets = (
@@ -233,7 +233,7 @@ class CommentAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     raw_id_fields = ['task', 'author']
 
     list_per_page = 25

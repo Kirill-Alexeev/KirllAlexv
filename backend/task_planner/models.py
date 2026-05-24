@@ -157,9 +157,7 @@ class Task(models.Model):
     @property
     def is_overdue(self):
         """Проверка, просрочена ли задача"""
-        return (self.due_date and
-                timezone.now().date() > self.due_date and
-                self.status != self.Status.COMPLETED)
+        return self.status == self.Status.OVERDUE
 
     @property
     def is_personal(self):
