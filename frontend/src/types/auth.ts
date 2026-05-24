@@ -40,3 +40,8 @@ export interface RegisterData {
     phone?: string
     date_of_birth?: string
 }
+
+export interface AuthResponse {
+    user: User
+    token: string
+}

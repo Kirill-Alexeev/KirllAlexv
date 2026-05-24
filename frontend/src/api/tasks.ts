@@ -1,66 +1,9 @@
 // API запросы для планировщика задач
 import { api } from './client'
-
-// Интерфейс тега
-export interface Tag {
-    id: number
-    title: string
-    description: string
-    user: number
-}
-
-// Интерфейс рабочего просранства
-export interface Workspace {
-    id: number
-    title: string
-    description: string
-    owner: number
-    created_at: string
-    updated_at: string
-    members_count: number
-}
-
-// Интерфейс задачи
-export interface Task {
-    id: number
-    title: string
-    description: string
-    owner: number
-    workspace: number | null
-    due_date: string | null
-    deadline: string | null
-    status: number
-    priority: number
-    tags: Tag[]
-    assignees: number[]
-    created_at: string
-    updated_at: string
-    is_overdue: boolean
-    is_personal: boolean
-    subtasks_count: number
-    comments_count: number
-}
-
-// Интерфейс подзадачи
-export interface Subtask {
-    id: number
-    title: string
-    description: string
-    status: number
-    parent_task: number
-    assignee: number | null
-    created_at: string
-}
-
-// Интерфейс комментария
-export interface Comment {
-    id: number
-    task: number
-    author: number
-    text: string
-    created_at: string
-    updated_at: string
-}
+import { Tag } from '@/types/tasks'
+import { Workspace } from '@/types/tasks'
+import { Task } from '@/types/tasks'
+import { Subtask } from '@/types/tasks'
 
 // Работа с API задач
 export const tasksApi = {

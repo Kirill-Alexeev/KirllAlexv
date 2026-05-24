@@ -2,6 +2,7 @@ import { Dispatch } from 'redux'
 import { authApi } from '@/api/auth'
 import { setLoading, setError, loginSuccess, logout } from './authSlice'
 import { LoginData, RegisterData } from '@/types'
+import { parseApiError } from '@/utils/index'
 
 export const loginUser = (data: LoginData) => async (dispatch: Dispatch) => {
     try {
@@ -13,7 +14,7 @@ export const loginUser = (data: LoginData) => async (dispatch: Dispatch) => {
 
         return response.data
     } catch (error: any) {
-        const errorMessage = error.response?.data?.detail || 'Ошибка авторизации'
+        const errorMessage = parseApiError(error)
         dispatch(setError(errorMessage))
         throw error
     } finally {
@@ -31,7 +32,7 @@ export const registerUser = (data: RegisterData) => async (dispatch: Dispatch) =
 
         return response.data
     } catch (error: any) {
-        const errorMessage = error.response?.data?.detail || 'Ошибка регистрации'
+        const errorMessage = parseApiError(error)
         dispatch(setError(errorMessage))
         throw error
     } finally {
@@ -51,15 +52,23 @@ export const logoutUser = () => async (dispatch: Dispatch) => {
 
 export const checkAuth = () => async (dispatch: Dispatch) => {
     const token = localStorage.getItem('authToken')
-    const userData = localStorage.getItem('user')
 
-    if (token && userData) {
-        try {
-            const user = JSON.parse(userData)
-            dispatch(loginSuccess({ user, token }))
-        } catch (error) {
-            dispatch(logout())
-        }
+    if (!token) {
+        dispatch(logout())
+        return
+    }
+
+    try {
+        dispatch(setLoading(true))
+        const response = await authApi.getProfile()
+        dispatch(loginSuccess({
+            user: response.data,
+            token
+        }))
+    } catch (error) {
+        dispatch(logout())
+    } finally {
+        dispatch(setLoading(false))
     }
 }
 
@@ -69,33 +78,13 @@ export const deleteAccount = () => async (dispatch: Dispatch) => {
         dispatch(setError(null))
 
         await authApi.deleteAccount()
-
-        // Очищаем локальные данные
         dispatch(logout())
 
-        // Очищаем localStorage
-        const keysToRemove = [
-            'authToken',
-            'user',
-            'userPreferences',
-            'tasks',
-            'notes',
-            'books',
-            'workouts',
-            'budget',
-            'sidebarState',
-            'theme'
-        ]
-
-        keysToRemove.forEach(key => {
-            localStorage.removeItem(key)
-        })
-
+        localStorage.clear()
         sessionStorage.clear()
 
     } catch (error: any) {
-        const errorMessage = error.response?.data?.detail || 'Ошибка при удалении аккаунта'
-        dispatch(setError(errorMessage))
+        dispatch(setError(parseApiError(error)))
         throw error
     } finally {
         dispatch(setLoading(false))

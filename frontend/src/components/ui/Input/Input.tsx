@@ -2,7 +2,7 @@ import React from 'react'
 import { InputSize, InputType, InputOption } from '@/types'
 import './Input.scss'
 
-interface InputProps {
+type CommonProps = {
   inputSize?: InputSize
   type?: InputType
   label?: string
@@ -10,7 +10,40 @@ interface InputProps {
   helperText?: string
   options?: InputOption[]
   className?: string
-  [key: string]: any // Позволяет передавать любые другие пропсы
+  placeholder?: string
+  disabled?: boolean
+  id?: string
+  name?: string
+}
+
+type InputOnlyProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'type'
+>
+
+type SelectOnlyProps = React.SelectHTMLAttributes<HTMLSelectElement>
+
+type TextareaOnlyProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>
+
+type InputProps = CommonProps & {
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => void
+  value?: string | number | readonly string[]
+  defaultValue?: string | number | readonly string[]
+  autoComplete?: string
+  required?: boolean
+  readOnly?: boolean
+  maxLength?: number
+  minLength?: number
+  min?: number | string
+  max?: number | string
+  step?: number | string
+  pattern?: string
+  multiple?: boolean
+  accept?: string
+  rows?: number
+  cols?: number
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -21,16 +54,13 @@ export const Input: React.FC<InputProps> = ({
   helperText,
   options,
   className = '',
+  onChange,
   ...props
 }) => {
-  const baseClass = 'input-wrapper'
-  const sizeClass = `input-wrapper--${inputSize}`
-  const errorClass = error ? 'input-wrapper--error' : ''
-
   const classes = [
-    baseClass,
-    sizeClass,
-    errorClass,
+    'input-wrapper',
+    `input-wrapper--${inputSize}`,
+    error ? 'input-wrapper--error' : '',
     className
   ].filter(Boolean).join(' ')
 
@@ -40,7 +70,8 @@ export const Input: React.FC<InputProps> = ({
         return (
           <select
             className="input"
-            {...props}
+            onChange={onChange as React.ChangeEventHandler<HTMLSelectElement>}
+            {...(props as SelectOnlyProps)}
           >
             <option value="">{props.placeholder || 'Выберите опцию'}</option>
             {options?.map(option => (
@@ -55,7 +86,8 @@ export const Input: React.FC<InputProps> = ({
         return (
           <textarea
             className="input input--textarea"
-            {...props}
+            onChange={onChange as React.ChangeEventHandler<HTMLTextAreaElement>}
+            {...(props as TextareaOnlyProps)}
           />
         )
 
@@ -64,7 +96,8 @@ export const Input: React.FC<InputProps> = ({
           <input
             type={type}
             className="input"
-            {...props}
+            onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+            {...(props as InputOnlyProps)}
           />
         )
     }
