@@ -1,0 +1,75 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.workspaces-view__header {
+    @include flex-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.workspaces-view__title {
+    margin: 0 0 6px;
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.workspaces-view__subtitle {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    max-width: 480px;
+}
+
+.workspaces-view__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.workspace-card {
+    @include flex-column;
+    gap: 16px;
+    padding: 18px;
+    background: map.get($colors, bg-3);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.55);
+    border-radius: 14px;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: rgba(map.get($colors, accent), 0.4);
+    }
+}
+
+.workspace-card__title {
+    margin: 0 0 8px;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.workspace-card__description {
+    margin: 0 0 12px;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    line-height: map.get($line-height, normal);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.workspace-card__meta {
+    @include flex-start;
+    gap: 12px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+}
+
+.workspace-card__actions {
+    @include flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}

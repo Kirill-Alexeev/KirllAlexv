@@ -1,0 +1,25 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.completed-view {
+    max-width: 720px;
+}
+
+.completed-view__header {
+    @include flex-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.completed-view__title {
+    margin: 0;
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.completed-view__list {
+    @include flex-column;
+    gap: 10px;
+}

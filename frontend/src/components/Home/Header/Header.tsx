@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui'
 import arrowDownIcon from "../../../assets/icons/arrow-without-down.svg";
 import arrowUpIcon from "../../../assets/icons/arrow-without-up.svg";
@@ -12,10 +12,10 @@ interface AppLink {
 }
 
 const mainApps: AppLink[] = [
-    { name: 'Планировщик задач', path: '/tasks', available: true },
+    { name: 'To-Do', path: '/tasks', available: true },
     { name: 'Заметки', path: '/notes', available: false },
-    { name: 'Тренировки', path: '/workouts', available: false },
     { name: 'Библиотека', path: '/library', available: false },
+    { name: 'Тренировки', path: '/workouts', available: false },
     { name: 'Трекер бюджета', path: '/budget', available: false },
 ]
 
@@ -27,6 +27,7 @@ const moreApps: AppLink[] = [
 export const Header: React.FC = () => {
     const [isMoreOpen, setIsMoreOpen] = useState(false)
     const moreRef = useRef<HTMLDivElement>(null)
+    const location = useLocation()
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -39,16 +40,21 @@ export const Header: React.FC = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    const renderAppLink = (app: AppLink) => (
-        <Link
-            key={app.name}
-            to={app.available ? app.path : '#'}
-            className={`header__app-link ${!app.available ? 'header__app-link--disabled' : ''}`}
-            onClick={() => !app.available && event?.preventDefault()}
-        >
-            {app.name}
-        </Link>
-    )
+    const renderAppLink = (app: AppLink) => {
+        const isActive = app.available && location.pathname.startsWith(app.path)
+        return (
+            <Link
+                key={app.name}
+                to={app.available ? app.path : '#'}
+                className={`header__app-link ${!app.available ? 'header__app-link--disabled' : ''} ${isActive ? 'header__app-link--active' : ''}`}
+                onClick={(e) => {
+                    if (!app.available) e.preventDefault()
+                }}
+            >
+                {app.name}
+            </Link>
+        )
+    }
 
     return (
         <header className="header">

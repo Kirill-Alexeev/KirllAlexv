@@ -1,0 +1,37 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.task-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.task-tabs__item {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: map.get($colors, gray-1);
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, medium);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        color: map.get($colors, light);
+        background: rgba(map.get($colors, bg-3), 0.8);
+    }
+
+    &--active {
+        background: map.get($colors, light);
+        color: map.get($colors, dark);
+
+        &:hover {
+            background: map.get($colors, light);
+            color: map.get($colors, dark);
+        }
+    }
+}

@@ -1,80 +1,93 @@
-// API запросы для планировщика задач
 import { api } from './client'
-import { Tag } from '@/types/tasks'
-import { Workspace } from '@/types/tasks'
-import { Task } from '@/types/tasks'
-import { Subtask } from '@/types/tasks'
+import { unwrapList } from '@/utils'
+import type {
+    Tag,
+    Task,
+    Workspace,
+    WorkspaceDetail,
+    Subtask,
+    Comment,
+    CreateTaskData,
+    CreateWorkspaceData,
+} from '@/types'
 
-// Работа с API задач
 export const tasksApi = {
-    // Tags
-    // Получение тегов
-    getTags: () => api.get<Tag[]>('/tasks/tags/'),
-
-    // Создание тега
-    createTag: (data: Omit<Tag, 'id' | 'user'>) =>
+    getTags: async () => {
+        const response = await api.get<Tag[] | { results: Tag[] }>('/tasks/tags/')
+        return { ...response, data: unwrapList<Tag>(response.data) }
+    },
+    createTag: (data: { title: string; description?: string }) =>
         api.post<Tag>('/tasks/tags/', data),
-
-    // Изменение тега
     updateTag: (id: number, data: Partial<Tag>) =>
         api.put<Tag>(`/tasks/tags/${id}/`, data),
-
-    // Удаление тега
     deleteTag: (id: number) => api.delete(`/tasks/tags/${id}/`),
 
-    // Workspaces
-    // Получение всех рабочих пространств
-    getWorkspaces: () => api.get<Workspace[]>('/tasks/workspaces/'),
-
-    // Получение рабочего пространства по id
-    getWorkspace: (id: number) => api.get<Workspace>(`/tasks/workspaces/${id}/`),
-
-    // Создание рабочего пространства
-    createWorkspace: (data: Omit<Workspace, 'id' | 'owner' | 'created_at' | 'updated_at' | 'members_count'>) =>
+    getWorkspaces: async () => {
+        const response = await api.get<Workspace[] | { results: Workspace[] }>(
+            '/tasks/workspaces/',
+        )
+        return { ...response, data: unwrapList<Workspace>(response.data) }
+    },
+    getWorkspace: (id: number) => api.get<WorkspaceDetail>(`/tasks/workspaces/${id}/`),
+    createWorkspace: (data: CreateWorkspaceData) =>
         api.post<Workspace>('/tasks/workspaces/', data),
+    updateWorkspace: (id: number, data: Partial<CreateWorkspaceData>) =>
+        api.patch<Workspace>(`/tasks/workspaces/${id}/`, data),
+    deleteWorkspace: (id: number) => api.delete(`/tasks/workspaces/${id}/`),
+    joinWorkspace: (inviteCode: string) =>
+        api.post<Workspace>('/tasks/workspaces/join/', { invite_code: inviteCode }),
+    addWorkspaceMember: (workspaceId: number, userId: number, role?: number) =>
+        api.post(`/tasks/workspaces/${workspaceId}/add_member/`, {
+            user_id: userId,
+            role,
+        }),
+    removeWorkspaceMember: (workspaceId: number, userId: number) =>
+        api.delete(`/tasks/workspaces/${workspaceId}/remove_member/${userId}/`),
 
-    // Tasks
-    // Получение задач
-    getTasks: () => api.get<Task[]>('/tasks/tasks/'),
-
-    // Получение личных задач пользователя
-    getPersonalTasks: () => api.get<Task[]>('/tasks/tasks/personal/'),
-
-    // Получение задач из рабочего пространства
-    getWorkspaceTasks: (workspaceId: number) =>
-        api.get<Task[]>(`/tasks/tasks/workspace_tasks/?workspace_id=${workspaceId}`),
-
-    // Получение задачи по id
+    getTasks: async () => {
+        const response = await api.get<Task[] | { results: Task[] }>('/tasks/tasks/')
+        return { ...response, data: unwrapList<Task>(response.data) }
+    },
+    getPersonalTasks: async () => {
+        const response = await api.get<Task[] | { results: Task[] }>('/tasks/tasks/personal/')
+        return { ...response, data: unwrapList<Task>(response.data) }
+    },
+    getWorkspaceTasks: async (workspaceId: number) => {
+        const response = await api.get<Task[] | { results: Task[] }>(
+            `/tasks/tasks/workspace_tasks/?workspace_id=${workspaceId}`,
+        )
+        return { ...response, data: unwrapList<Task>(response.data) }
+    },
     getTask: (id: number) => api.get<Task>(`/tasks/tasks/${id}/`),
-
-    // Создание задачи
-    createTask: (data: Omit<Task, 'id' | 'owner' | 'created_at' | 'updated_at' | 'is_overdue' | 'is_personal' | 'subtasks_count' | 'comments_count'>) =>
-        api.post<Task>('/tasks/tasks/', data),
-
-    // Изменение задачи
-    updateTask: (id: number, data: Partial<Task>) =>
-        api.put<Task>(`/tasks/tasks/${id}/`, data),
-
-    // Удаление задачи
+    createTask: (data: CreateTaskData) => api.post<Task>('/tasks/tasks/', data),
+    updateTask: (id: number, data: Partial<CreateTaskData> & { status?: number }) =>
+        api.patch<Task>(`/tasks/tasks/${id}/`, data),
     deleteTask: (id: number) => api.delete(`/tasks/tasks/${id}/`),
-
-    // Изменение статуса задачи
     changeTaskStatus: (id: number, status: number) =>
         api.post(`/tasks/tasks/${id}/change_status/`, { status }),
 
-    // Subtasks
-    // Получение подзадач
-    getSubtasks: () => api.get<Subtask[]>('/tasks/subtasks/'),
+    getSubtasks: async (taskId?: number) => {
+        const response = await api.get<Subtask[] | { results: Subtask[] }>('/tasks/subtasks/', {
+            params: taskId ? { parent_task: taskId } : {},
+        })
+        return { ...response, data: unwrapList<Subtask>(response.data) }
+    },
+    createSubtask: (data: {
+        title: string
+        description?: string
+        parent_task: number
+        assignee?: number | null
+    }) => api.post<Subtask>('/tasks/subtasks/', data),
+    updateSubtask: (id: number, data: Partial<Subtask>) =>
+        api.patch<Subtask>(`/tasks/subtasks/${id}/`, data),
+    deleteSubtask: (id: number) => api.delete(`/tasks/subtasks/${id}/`),
 
-    // Создание подзадачи
-    createSubtask: (data: Omit<Subtask, 'id' | 'created_at'>) =>
-        api.post<Subtask>('/tasks/subtasks/', data),
-
-    // Comments
-    // Получение комментариев
-    getComments: () => api.get<Comment[]>('/tasks/comments/'),
-
-    // Создание комментария
-    createComment: (data: Omit<Comment, 'id' | 'author' | 'created_at' | 'updated_at'>) =>
+    getComments: async (taskId?: number) => {
+        const response = await api.get<Comment[] | { results: Comment[] }>('/tasks/comments/', {
+            params: taskId ? { task: taskId } : {},
+        })
+        return { ...response, data: unwrapList<Comment>(response.data) }
+    },
+    createComment: (data: { task: number; text: string }) =>
         api.post<Comment>('/tasks/comments/', data),
 }

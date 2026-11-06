@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.invite-link-modal-backdrop {
+    .modal {
+        border: 1px solid rgba(map.get($colors, accent), 0.5);
+    }
+}
+
+.invite-link-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.invite-link-modal__hint {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    line-height: map.get($line-height, normal);
+}
+
+.invite-link-modal__link {
+    padding: 12px 14px;
+    background: map.get($colors, bg-5);
+    border: 1px solid map.get($colors, gray-4);
+    border-radius: 10px;
+    color: map.get($colors, light);
+    font-family: map.get($font-family, mono);
+    font-size: map.get($font-size, sm);
+    line-height: map.get($line-height, normal);
+    word-break: break-all;
+    user-select: all;
+    cursor: text;
+}
+
+.invite-link-modal__footer {
+    @include flex-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.invite-link-modal__status {
+    font-size: map.get($font-size, xs);
+    min-height: 1em;
+
+    &--copied {
+        color: map.get($colors, accent);
+    }
+
+    &--error {
+        color: map.get($colors, error);
+    }
+}

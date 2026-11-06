@@ -1,0 +1,14 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.all-tasks-view {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    min-height: 400px;
+
+    @include scrollbar(6px, map.get($colors, gray-3), transparent);
+}

@@ -22,14 +22,17 @@ class WorkspaceMembershipSerializer(serializers.ModelSerializer):
 class WorkspaceSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
     members_count = serializers.SerializerMethodField()
+    invite_code = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = Workspace
         fields = [
-            'id', 'title', 'description', 'owner',
+            'id', 'title', 'description', 'owner', 'invite_code',
             'created_at', 'updated_at', 'members_count'
         ]
-        read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
+        read_only_fields = [
+            'id', 'owner', 'invite_code', 'created_at', 'updated_at'
+        ]
 
     def get_members_count(self, obj):
         return obj.memberships.count()
@@ -88,7 +91,7 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
         model = Task
         fields = [
             'title', 'description', 'due_date', 'deadline',
-            'status', 'priority', 'tags', 'assignees'
+            'priority', 'tags', 'assignees'
         ]
 
 

@@ -1,0 +1,79 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.task-column {
+    display: flex;
+    flex-direction: column;
+    min-width: 280px;
+    max-width: 320px;
+    flex: 0 0 280px;
+    max-height: 100%;
+}
+
+.task-column__header {
+    @include flex-between;
+    margin-bottom: 14px;
+    padding: 0 4px;
+    gap: 8px;
+}
+
+.task-column__title {
+    margin: 0;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
+    line-height: map.get($line-height, tight);
+}
+
+.task-column--overdue .task-column__title {
+    color: map.get($colors, error);
+}
+
+.task-column__count {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+    background: rgba(map.get($colors, bg-5), 0.8);
+    border-radius: 999px;
+    padding: 2px 8px;
+}
+
+.task-column__list {
+    @include flex-column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 8px;
+
+    @include scrollbar(4px, map.get($colors, gray-3), transparent);
+}
+
+.task-column__add {
+    @include flex-start;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    color: map.get($colors, light);
+    font-size: map.get($font-size, sm);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    img {
+        width: 18px;
+        height: 18px;
+        filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+    }
+
+    &:hover {
+        color: map.get($colors, accent);
+        background: rgba(map.get($colors, bg-3), 0.6);
+    }
+
+    &--compact {
+        justify-content: center;
+    }
+}

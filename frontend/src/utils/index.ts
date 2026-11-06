@@ -1,3 +1,12 @@
+/** DRF PageNumberPagination: { count, next, previous, results } или обычный массив */
+export const unwrapList = <T>(data: unknown): T[] => {
+    if (Array.isArray(data)) return data
+    if (data && typeof data === 'object' && Array.isArray((data as { results?: unknown }).results)) {
+        return (data as { results: T[] }).results
+    }
+    return []
+}
+
 export const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('ru-RU')
 }

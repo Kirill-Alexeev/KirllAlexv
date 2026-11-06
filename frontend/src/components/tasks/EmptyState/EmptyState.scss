@@ -1,0 +1,25 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.empty-state {
+    @include flex-center-column;
+    gap: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    color: map.get($colors, gray-2);
+}
+
+.empty-state__title {
+    margin: 0;
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
+}
+
+.empty-state__description {
+    margin: 0 0 8px;
+    max-width: 360px;
+    font-size: map.get($font-size, sm);
+    line-height: map.get($line-height, normal);
+}

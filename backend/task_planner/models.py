@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
@@ -33,6 +35,12 @@ class Workspace(models.Model):
         on_delete=models.CASCADE,
         related_name='owned_workspaces',
         verbose_name='владелец'
+    )
+    invite_code = models.UUIDField(
+        'код приглашения',
+        default=uuid.uuid4,
+        unique=True,
+        editable=False
     )
     created_at = models.DateTimeField('дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('дата обновления', auto_now=True)
@@ -147,11 +155,14 @@ class Task(models.Model):
         return self.title
 
     def save(self, *args, **kwargs):
-        """Автоматически обновляем статус на 'Просрочена' при сохранении"""
-        if (self.due_date and
-            timezone.now().date() > self.due_date and
-                self.status != self.Status.COMPLETED):
-            self.status = self.Status.OVERDUE
+        """Автоматически обновляем статус 'Просрочена' / 'Активна' при сохранении"""
+        if self.status != self.Status.COMPLETED:
+            limit = self.deadline or self.due_date
+            if limit and timezone.now().date() > limit:
+                self.status = self.Status.OVERDUE
+            elif self.status == self.Status.OVERDUE:
+                # Задачу перенесли — она снова активна
+                self.status = self.Status.ACTIVE
         super().save(*args, **kwargs)
 
     @property

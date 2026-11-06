@@ -1,0 +1,140 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.create-task-modal-backdrop {
+    .modal {
+        border: 1px solid map.get($colors, accent);
+        background: map.get($colors, bg-4);
+    }
+}
+
+.create-task-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.create-task-modal__title {
+    border: none !important;
+    border-bottom: 1px solid map.get($colors, gray-4) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: map.get($colors, light) !important;
+    font-size: map.get($font-size, xl) !important;
+    font-weight: map.get($font-weight, semibold);
+    padding: 0 0 8px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: border-color 0.2s ease;
+
+    &:focus,
+    &:focus-visible {
+        border-bottom-color: map.get($colors, accent) !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    &::placeholder {
+        color: map.get($colors, gray-3);
+    }
+}
+
+.create-task-modal__description {
+    border: none !important;
+    background: transparent !important;
+    color: map.get($colors, gray-1) !important;
+    font-size: map.get($font-size, mid) !important;
+    padding: 0 !important;
+    min-height: 64px;
+    resize: vertical;
+    box-shadow: none !important;
+
+    &::placeholder {
+        color: map.get($colors, gray-3);
+    }
+}
+
+.create-task-modal__fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+
+    @include mobile {
+        grid-template-columns: 1fr;
+    }
+}
+
+.create-task-modal__field {
+    @include flex-column;
+    gap: 6px;
+    min-width: 0;
+
+    input {
+        @include form-control;
+    }
+
+    select {
+        @include styled-select;
+    }
+}
+
+.create-task-modal__label {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+}
+
+.create-task-modal__row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.create-task-modal__select {
+    @include flex-column;
+    gap: 6px;
+    flex: 1;
+    min-width: 160px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+
+    select {
+        @include styled-select;
+    }
+}
+
+.create-task-modal__new-tag {
+    @include flex-start;
+    gap: 6px;
+
+    input {
+        @include form-control;
+        width: 140px;
+    }
+}
+
+.create-task-modal__new-tag-btn {
+    min-height: 42px;
+    white-space: nowrap;
+
+    .btn__icon {
+        width: 14px;
+        height: 14px;
+        filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+    }
+
+    &:hover:not(.btn--disabled) .btn__icon {
+        filter: none;
+    }
+}
+
+.create-task-modal__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.create-task-modal__footer {
+    @include flex-end;
+    margin-top: 8px;
+}

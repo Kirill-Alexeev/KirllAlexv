@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.workspace-page {
+    min-height: calc(100vh - 40px);
+}
+
+.workspace-page__top {
+    margin: 12px 0 20px;
+}
+
+.workspace-page__back {
+    display: inline-block;
+    margin-bottom: 12px;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    text-decoration: none;
+
+    &:hover {
+        color: map.get($colors, accent);
+    }
+}
+
+.workspace-page__heading {
+    @include flex-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.workspace-page__title {
+    margin: 0 0 6px;
+    font-size: map.get($font-size, shl);
+    font-weight: map.get($font-weight, bold);
+    color: map.get($colors, light);
+}
+
+.workspace-page__desc {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    max-width: 560px;
+}
+
+.workspace-page__actions {
+    @include flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.workspace-page__loading {
+    color: map.get($colors, gray-2);
+    padding: 24px 0;
+}

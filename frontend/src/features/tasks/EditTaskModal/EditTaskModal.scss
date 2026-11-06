@@ -1,0 +1,88 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.edit-task-modal-backdrop {
+    .modal {
+        border: 1px solid rgba(map.get($colors, accent), 0.5);
+    }
+}
+
+.edit-task-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.edit-task-modal__field {
+    @include flex-column;
+    gap: 6px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+
+    input {
+        @include form-control;
+    }
+
+    select {
+        @include styled-select;
+    }
+
+    textarea {
+        background: map.get($colors, bg-5);
+        border: 1px solid map.get($colors, gray-4);
+        border-radius: 10px;
+        color: map.get($colors, light);
+        padding: 10px 12px;
+        font-size: map.get($font-size, sm);
+
+        &:focus {
+            border-color: map.get($colors, accent);
+            box-shadow: none;
+            outline: none;
+        }
+    }
+}
+
+.edit-task-modal__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    @include mobile {
+        grid-template-columns: 1fr;
+    }
+}
+
+.edit-task-modal__overdue {
+    @include flex-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border: 1px solid rgba(map.get($colors, error), 0.6);
+    border-radius: 10px;
+    background: rgba(map.get($colors, error), 0.12);
+}
+
+.edit-task-modal__overdue-text {
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, light);
+}
+
+.edit-task-modal__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.edit-task-modal__footer {
+    @include flex-between;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.edit-task-modal__footer-right {
+    @include flex-end;
+    gap: 8px;
+    margin-left: auto;
+}

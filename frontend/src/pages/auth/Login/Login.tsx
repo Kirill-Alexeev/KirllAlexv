@@ -22,7 +22,9 @@ export const Login: React.FC = () => {
         }
     }, [isAuthenticated, navigate])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
         setFormData(prev => ({
             ...prev,
             [e.target.name]: e.target.value

@@ -24,6 +24,27 @@ class TagViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
+def _get_workspace_membership(workspace, user):
+    return workspace.memberships.filter(user=user).first()
+
+
+def _is_workspace_admin(workspace, user):
+    if workspace.owner_id == user.id:
+        return True
+    membership = _get_workspace_membership(workspace, user)
+    return bool(
+        membership and membership.role >= WorkspaceMembership.Role.ADMIN
+    )
+
+
+def _can_manage_task(task, user):
+    if task.owner_id == user.id:
+        return True
+    if task.workspace_id and _is_workspace_admin(task.workspace, user):
+        return True
+    return False
+
+
 class WorkspaceViewSet(viewsets.ModelViewSet):
     serializer_class = WorkspaceSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -53,6 +74,29 @@ class WorkspaceViewSet(viewsets.ModelViewSet):
                 'Только владелец может удалить рабочее пространство'
             )
         instance.delete()
+
+    @action(detail=False, methods=['post'])
+    def join(self, request):
+        invite_code = request.data.get('invite_code')
+        if not invite_code:
+            return Response(
+                {'error': 'invite_code обязателен'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        workspace = get_object_or_404(Workspace, invite_code=invite_code)
+
+        if workspace.memberships.filter(user=request.user).exists():
+            serializer = self.get_serializer(workspace)
+            return Response(serializer.data)
+
+        WorkspaceMembership.objects.create(
+            user=request.user,
+            workspace=workspace,
+            role=WorkspaceMembership.Role.MEMBER
+        )
+        serializer = self.get_serializer(workspace)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['post'])
     def add_member(self, request, pk=None):
@@ -159,20 +203,36 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def _full_task_response(self, task, status_code=status.HTTP_200_OK):
+        """Возвращаем полную задачу (id, owner, теги объектами и т.д.)"""
+        task.refresh_from_db()
+        data = TaskSerializer(task, context=self.get_serializer_context()).data
+        return Response(data, status=status_code)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return self._full_task_response(serializer.instance, status.HTTP_201_CREATED)
+
     def update(self, request, *args, **kwargs):
         task = self.get_object()
-        if task.owner != request.user:
+        if not _can_manage_task(task, request.user):
             return Response(
-                {'error': 'Только владелец может редактировать задачу'},
+                {'error': 'Недостаточно прав для редактирования задачи'},
                 status=status.HTTP_403_FORBIDDEN
             )
-        return super().update(request, *args, **kwargs)
+        partial = kwargs.pop('partial', False)
+        serializer = self.get_serializer(task, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return self._full_task_response(serializer.instance)
 
     def destroy(self, request, *args, **kwargs):
         task = self.get_object()
-        if task.owner != request.user:
+        if not _can_manage_task(task, request.user):
             return Response(
-                {'error': 'Только владелец может удалить задачу'},
+                {'error': 'Удалять задачи может только владелец или админ пространства'},
                 status=status.HTTP_403_FORBIDDEN
             )
         return super().destroy(request, *args, **kwargs)

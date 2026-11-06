@@ -1,0 +1,75 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.week-view {
+    @include flex-column;
+    gap: 32px;
+}
+
+.week-view__nav {
+    @include flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.week-view__nav-btn {
+    padding: 8px 14px;
+    border: 1px solid rgba(map.get($colors, gray-3), 0.45);
+    border-radius: 999px;
+    background: transparent;
+    color: map.get($colors, gray-1);
+    font-size: map.get($font-size, sm);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        border-color: map.get($colors, accent);
+        color: map.get($colors, accent);
+    }
+}
+
+.week-view__week {
+    @include flex-column;
+    gap: 14px;
+}
+
+.week-view__week-header {
+    @include flex-between;
+    gap: 12px;
+    padding: 0 4px;
+    flex-wrap: wrap;
+}
+
+.week-view__week-info {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.week-view__week-title {
+    margin: 0;
+    font-size: map.get($font-size, lg);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.week-view__week-range {
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-3);
+}
+
+.week-view__columns {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+
+    @include scrollbar(6px, map.get($colors, gray-3), transparent);
+
+    .task-column {
+        min-width: 220px;
+        max-width: 240px;
+        flex: 0 0 220px;
+    }
+}

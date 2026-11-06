@@ -1,0 +1,78 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.today-view {
+    max-width: 720px;
+}
+
+.today-view__header {
+    @include flex-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.today-view__eyebrow {
+    margin: 0 0 4px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.today-view__title {
+    margin: 0;
+    font-size: map.get($font-size, shl);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.today-view__add {
+    @include flex-start;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: map.get($colors, accent);
+    color: map.get($colors, dark);
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, medium);
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    img {
+        width: 18px;
+        height: 18px;
+        filter: brightness(0);
+    }
+
+    &:hover {
+        background: map.get($colors, success);
+        color: map.get($colors, light);
+
+        img {
+            filter: brightness(0) invert(1);
+        }
+    }
+}
+
+.today-view__section {
+    margin-bottom: 28px;
+}
+
+.today-view__section-title {
+    margin: 0 0 14px;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, gray-1);
+
+    &--danger {
+        color: map.get($colors, error);
+    }
+}
+
+.today-view__list {
+    @include flex-column;
+    gap: 12px;
+}

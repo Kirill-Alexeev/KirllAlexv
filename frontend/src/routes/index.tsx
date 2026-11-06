@@ -4,6 +4,9 @@ import { PrivateRoute } from './PrivateRoute'
 import { Home } from '@/pages/Home/Home'
 import { Login } from '@/pages/auth/Login/Login'
 import { Register } from '@/pages/auth/Register/Register'
+import { TasksPage } from '@/pages/tasks/TasksPage/TasksPage'
+import { WorkspacePage } from '@/pages/tasks/WorkspacePage/WorkspacePage'
+import { JoinWorkspacePage } from '@/pages/tasks/JoinWorkspacePage/JoinWorkspacePage'
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -17,9 +20,21 @@ export const AppRoutes: React.FC = () => {
         </PrivateRoute>
       } />
 
-      <Route path="/tasks/*" element={
+      <Route path="/tasks" element={
         <PrivateRoute>
-          <></>
+          <TasksPage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/tasks/workspaces/join/:inviteCode" element={
+        <PrivateRoute>
+          <JoinWorkspacePage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/tasks/workspaces/:workspaceId" element={
+        <PrivateRoute>
+          <WorkspacePage />
         </PrivateRoute>
       } />
 
