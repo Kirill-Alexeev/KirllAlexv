@@ -9,6 +9,12 @@
     flex-wrap: wrap;
 }
 
+.workspaces-view__header-actions {
+    @include flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .workspaces-view__title {
     margin: 0 0 6px;
     font-size: map.get($font-size, lg);

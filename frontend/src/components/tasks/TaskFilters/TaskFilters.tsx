@@ -11,7 +11,12 @@ import filterIcon from '@/assets/icons/filter.svg'
 import searchIcon from '@/assets/icons/search.svg'
 import './TaskFilters.scss'
 
-export const TaskFilters: React.FC = () => {
+interface TaskFiltersProps {
+    /** Подпись над списком тегов: личные или теги пространства */
+    tagsTitle?: string
+}
+
+export const TaskFilters: React.FC<TaskFiltersProps> = ({ tagsTitle = 'Мои теги' }) => {
     const dispatch = useDispatch()
     const { filters, tags: tagsState } = useSelector((state: RootState) => state.tasks)
     const tags = Array.isArray(tagsState) ? tagsState : []
@@ -113,7 +118,7 @@ export const TaskFilters: React.FC = () => {
 
                         {tags.length > 0 && (
                             <div className="task-filters__tags">
-                                <span className="task-filters__tags-title">Мои теги</span>
+                                <span className="task-filters__tags-title">{tagsTitle}</span>
                                 <ul className="task-filters__tags-list">
                                     {tags.map(tag => (
                                         <li key={tag.id} className="task-filters__tag">

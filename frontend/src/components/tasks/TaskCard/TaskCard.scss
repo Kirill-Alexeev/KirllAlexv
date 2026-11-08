@@ -141,20 +141,81 @@
     overflow: hidden;
 }
 
-.task-card__assignees {
-    display: flex;
-    flex-wrap: wrap;
+.task-card__assignee {
+    @include flex-start;
     gap: 6px;
+    margin-top: 10px;
     padding-left: 32px;
-    margin-bottom: 10px;
+    min-width: 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-1);
 }
 
-.task-card__assignee {
-    font-size: map.get($font-size, xs);
-    padding: 2px 8px;
+.task-card__assignee-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-card__assignee-more {
+    flex-shrink: 0;
+    padding: 1px 6px;
     border-radius: 999px;
-    background: rgba(map.get($colors, bg-1), 0.5);
-    color: map.get($colors, gray-1);
+    background: rgba(map.get($colors, bg-5), 0.8);
+    color: map.get($colors, gray-2);
+}
+
+.task-card__unread {
+    flex-shrink: 0;
+    margin-left: auto;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: map.get($colors, accent);
+    color: map.get($colors, dark);
+    font-size: 1.1rem;
+    font-weight: map.get($font-weight, bold);
+    line-height: 20px;
+    text-align: center;
+}
+
+.task-card__comments {
+    svg {
+        width: 14px;
+        height: 14px;
+
+        path {
+            stroke: map.get($colors, gray-2);
+        }
+    }
+
+    &--unread {
+        color: map.get($colors, accent);
+
+        svg path {
+            stroke: map.get($colors, accent);
+        }
+    }
+}
+
+.task-card__subtasks {
+    svg {
+        width: 14px;
+        height: 14px;
+
+        path {
+            stroke: map.get($colors, gray-2);
+        }
+    }
+
+    &--done {
+        color: map.get($colors, accent);
+
+        svg path {
+            stroke: currentColor;
+        }
+    }
 }
 
 .task-card__meta {

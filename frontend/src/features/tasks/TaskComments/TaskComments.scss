@@ -1,0 +1,158 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.task-comments {
+    @include flex-column;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(map.get($colors, gray-4), 0.6);
+}
+
+.task-comments__header {
+    @include flex-between;
+    gap: 12px;
+}
+
+.task-comments__title {
+    margin: 0;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.task-comments__new-count {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, accent);
+}
+
+.task-comments__list {
+    @include flex-column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    @include scrollbar(4px, map.get($colors, gray-3), transparent);
+}
+
+.task-comments__empty {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-3);
+}
+
+.task-comments__item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(map.get($colors, bg-5), 0.55);
+    border: 1px solid transparent;
+    border-left: 3px solid transparent;
+
+    &--unread {
+        background: rgba(map.get($colors, accent), 0.08);
+        border-color: rgba(map.get($colors, accent), 0.35);
+        border-left-color: map.get($colors, accent);
+    }
+}
+
+.task-comments__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-comments__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    margin-bottom: 4px;
+}
+
+.task-comments__author {
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
+}
+
+.task-comments__self {
+    font-weight: map.get($font-weight, normal);
+    color: map.get($colors, gray-2);
+}
+
+.task-comments__date {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+}
+
+.task-comments__badge {
+    padding: 0 8px;
+    border-radius: 999px;
+    background: map.get($colors, accent);
+    color: map.get($colors, dark);
+    font-size: 1.1rem;
+    font-weight: map.get($font-weight, semibold);
+    line-height: 18px;
+}
+
+.task-comments__delete {
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: map.get($colors, gray-3);
+    font-size: map.get($font-size, xs);
+    cursor: pointer;
+
+    &:hover {
+        color: map.get($colors, error);
+    }
+}
+
+.task-comments__text {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-1);
+    line-height: map.get($line-height, normal);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.task-comments__form {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+
+    textarea {
+        flex: 1;
+        min-height: 44px;
+        max-height: 160px;
+        resize: vertical;
+        padding: 10px 12px;
+        background: map.get($colors, bg-5);
+        border: 1px solid map.get($colors, gray-4);
+        border-radius: 10px;
+        color: map.get($colors, light);
+        font-size: map.get($font-size, sm);
+
+        &:focus,
+        &:focus-visible {
+            border-color: map.get($colors, accent);
+            box-shadow: none;
+            outline: none;
+        }
+
+        &::placeholder {
+            color: map.get($colors, gray-3);
+        }
+    }
+}
+
+.task-comments__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}

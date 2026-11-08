@@ -13,6 +13,8 @@ import { CompletedView } from '@/features/tasks/CompletedView/CompletedView'
 import { CreateTaskModal } from '@/features/tasks/CreateTaskModal/CreateTaskModal'
 import { EditTaskModal } from '@/features/tasks/EditTaskModal/EditTaskModal'
 import { InviteLinkModal } from '@/features/tasks/InviteLinkModal/InviteLinkModal'
+import { WorkspaceMembersModal } from '@/features/tasks/WorkspaceMembersModal/WorkspaceMembersModal'
+import { LeaveWorkspaceModal } from '@/features/tasks/LeaveWorkspaceModal/LeaveWorkspaceModal'
 import { Button } from '@/components/ui'
 import {
     fetchTasks,
@@ -21,8 +23,7 @@ import {
     changeTaskStatus,
     deleteCompletedTasks,
 } from '@/stores/tasks/tasksActions'
-import { setCurrentTask, setTasks } from '@/stores/tasks/tasksSlice'
-import { WORKSPACE_ROLE } from '@/types'
+import { setCurrentTask, setTags, setTasks } from '@/stores/tasks/tasksSlice'
 import {
     TASK_STATUS,
     canCompleteTask,
@@ -48,14 +49,18 @@ export const WorkspacePage: React.FC = () => {
     const [createDueDate, setCreateDueDate] = useState<string | null>(null)
     const [editOpen, setEditOpen] = useState(false)
     const [inviteOpen, setInviteOpen] = useState(false)
+    const [membersOpen, setMembersOpen] = useState(false)
+    const [leaveOpen, setLeaveOpen] = useState(false)
 
     useEffect(() => {
         if (!id) return
         // Не показываем задачи с предыдущей страницы, пока грузятся задачи пространства
         dispatch(setTasks([]))
+        dispatch(setTags([]))
         dispatch(fetchWorkspace(id) as any)
         dispatch(fetchTasks(id) as any)
-        dispatch(fetchTags() as any)
+        // У каждого пространства свои теги, личные теги здесь не показываем
+        dispatch(fetchTags(id) as any)
     }, [dispatch, id])
 
     const membership = useMemo(
@@ -94,7 +99,7 @@ export const WorkspacePage: React.FC = () => {
         const next = task.status === TASK_STATUS.COMPLETED
             ? TASK_STATUS.ACTIVE
             : TASK_STATUS.COMPLETED
-        dispatch(changeTaskStatus(task.id, next) as any)
+        dispatch(changeTaskStatus(task.id, next) as any).catch(() => {})
     }
 
     const handleTaskClick = (task: Task) => {
@@ -103,10 +108,10 @@ export const WorkspacePage: React.FC = () => {
     }
 
     const canManage = (task: Task) => canManageTask(task, user, membership)
-    const canComplete = (task: Task) => canCompleteTask(task, user, membership)
-    const isAdmin = Boolean(
-        membership && membership.role >= WORKSPACE_ROLE.ADMIN,
-    )
+    const canComplete = (task: Task) => canCompleteTask(task)
+    // Задачи создают и редактируют все участники пространства
+    const isMember = Boolean(membership)
+    const isOwner = Boolean(currentWorkspace && user && currentWorkspace.owner.id === user.id)
 
     return (
         <div className="workspace-page">
@@ -129,14 +134,22 @@ export const WorkspacePage: React.FC = () => {
                         <Button
                             variant="outline"
                             size="sm"
+                            onClick={() => setMembersOpen(true)}
+                            disabled={!currentWorkspace}
+                        >
+                            Участники ({currentWorkspace?.members.length ?? 0})
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => setInviteOpen(true)}
                             disabled={!currentWorkspace}
                         >
                             Пригласить по ссылке
                         </Button>
-                        {isAdmin && (
-                            <Button variant="primary" size="sm" onClick={() => handleAdd(null)}>
-                                Добавить задачу
+                        {isMember && (
+                            <Button variant="danger" size="sm" onClick={() => setLeaveOpen(true)}>
+                                Покинуть
                             </Button>
                         )}
                     </div>
@@ -144,7 +157,7 @@ export const WorkspacePage: React.FC = () => {
             </div>
 
             <TaskTabs active={view} onChange={handleViewChange} />
-            <TaskFilters />
+            <TaskFilters tagsTitle="Теги пространства" />
 
             {isLoading && !tasks.length ? (
                 <p className="workspace-page__loading">Загрузка…</p>
@@ -153,7 +166,7 @@ export const WorkspacePage: React.FC = () => {
                     {view === 'all' && (
                         <AllTasksView
                             tasks={filtered}
-                            canAdd={isAdmin}
+                            canAdd={isMember}
                             canComplete={canComplete}
                             canManage={canManage}
                             onAdd={handleAdd}
@@ -164,7 +177,7 @@ export const WorkspacePage: React.FC = () => {
                     {view === 'today' && (
                         <TodayView
                             tasks={filtered}
-                            canAdd={isAdmin}
+                            canAdd={isMember}
                             canComplete={canComplete}
                             canManage={canManage}
                             onAdd={() => handleAdd(null)}
@@ -175,7 +188,7 @@ export const WorkspacePage: React.FC = () => {
                     {view === 'week' && (
                         <WeekView
                             tasks={filtered}
-                            canAdd={isAdmin}
+                            canAdd={isMember}
                             canComplete={canComplete}
                             canManage={canManage}
                             onAdd={handleAdd}
@@ -221,6 +234,27 @@ export const WorkspacePage: React.FC = () => {
                 onClose={() => setInviteOpen(false)}
                 workspaceTitle={currentWorkspace?.title}
                 inviteCode={currentWorkspace?.invite_code}
+            />
+
+            <WorkspaceMembersModal
+                isOpen={membersOpen}
+                onClose={() => setMembersOpen(false)}
+                workspace={currentWorkspace}
+                currentUserId={user?.id}
+            />
+
+            <LeaveWorkspaceModal
+                isOpen={leaveOpen}
+                onClose={() => setLeaveOpen(false)}
+                onLeft={() => {
+                    setLeaveOpen(false)
+                    navigate('/tasks?view=workspaces')
+                }}
+                workspaceId={currentWorkspace?.id ?? null}
+                workspaceTitle={currentWorkspace?.title}
+                isOwner={isOwner}
+                members={currentWorkspace?.members}
+                currentUserId={user?.id}
             />
         </div>
     )

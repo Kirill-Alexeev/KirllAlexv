@@ -16,11 +16,8 @@ import {
     addWorkspace,
     removeWorkspace,
     setCurrentWorkspace,
-    addSubtask,
-    updateSubtask,
-    removeSubtask,
 } from './tasksSlice'
-import type { CreateTaskData, CreateWorkspaceData, Subtask, Task } from '@/types'
+import type { CreateTaskData, CreateWorkspaceData, Task } from '@/types'
 
 export const fetchTasks = (workspaceId?: number | null) => async (dispatch: Dispatch) => {
     try {
@@ -85,26 +82,29 @@ export const deleteCompletedTasks = (ids: number[]) => async (dispatch: Dispatch
     }
 }
 
+/** Возвращает {task, parent}; parent — если вместе с подзадачей закрылась/открылась задача */
 export const changeTaskStatus = (id: number, status: number) => async (dispatch: Dispatch) => {
     try {
-        await tasksApi.changeTaskStatus(id, status)
-        const response = await tasksApi.getTask(id)
-        dispatch(updateTask(response.data))
+        const response = await tasksApi.changeTaskStatus(id, status)
+        dispatch(updateTask(response.data.task))
+        if (response.data.parent) dispatch(updateTask(response.data.parent))
+        return response.data
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))
+        throw error
     }
 }
 
-export const fetchTags = () => async (dispatch: Dispatch) => {
+export const fetchTags = (workspaceId?: number | null) => async (dispatch: Dispatch) => {
     try {
-        const response = await tasksApi.getTags()
+        const response = await tasksApi.getTags(workspaceId)
         dispatch(setTags(response.data))
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))
     }
 }
 
-export const createTag = (data: { title: string; description?: string }) =>
+export const createTag = (data: { title: string; description?: string; workspace?: number | null }) =>
     async (dispatch: Dispatch) => {
         try {
             const response = await tasksApi.createTag(data)
@@ -123,6 +123,26 @@ export const deleteTag = (id: number) => async (dispatch: Dispatch) => {
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))
         throw error
+    }
+}
+
+/** Перечитать задачу (например, после нового комментария) */
+export const refreshTask = (id: number) => async (dispatch: Dispatch) => {
+    try {
+        const response = await tasksApi.getTask(id)
+        dispatch(updateTask(response.data))
+        return response.data
+    } catch (error: unknown) {
+        dispatch(setError(parseApiError(error)))
+    }
+}
+
+export const markCommentsRead = (id: number) => async (dispatch: Dispatch) => {
+    try {
+        const response = await tasksApi.markCommentsRead(id)
+        dispatch(updateTask(response.data))
+    } catch {
+        // не критично: счётчик просто останется
     }
 }
 
@@ -184,41 +204,58 @@ export const joinWorkspace = (inviteCode: string) => async (dispatch: Dispatch) 
     }
 }
 
-export const createSubtaskAction = (data: {
-    title: string
-    description?: string
-    parent_task: number
-    assignee?: number | null
-}) => async (dispatch: Dispatch) => {
-    try {
-        const response = await tasksApi.createSubtask(data)
-        dispatch(addSubtask({ taskId: data.parent_task, subtask: response.data }))
-        return response.data
-    } catch (error: unknown) {
-        dispatch(setError(parseApiError(error)))
-        throw error
-    }
+/** Обновить пространство и список пространств после изменения состава */
+const refreshWorkspace = async (dispatch: Dispatch, id: number) => {
+    const [detail, list] = await Promise.all([
+        tasksApi.getWorkspace(id),
+        tasksApi.getWorkspaces(),
+    ])
+    dispatch(setCurrentWorkspace(detail.data))
+    dispatch(setWorkspaces(list.data))
 }
 
-export const editSubtask = (id: number, data: Partial<Subtask>) => async (dispatch: Dispatch) => {
-    try {
-        const response = await tasksApi.updateSubtask(id, data)
-        dispatch(updateSubtask(response.data))
-        return response.data
-    } catch (error: unknown) {
-        dispatch(setError(parseApiError(error)))
-        throw error
+export const setWorkspaceMemberRole = (workspaceId: number, userId: number, role: number) =>
+    async (dispatch: Dispatch) => {
+        try {
+            await tasksApi.setWorkspaceMemberRole(workspaceId, userId, role)
+            await refreshWorkspace(dispatch, workspaceId)
+        } catch (error: unknown) {
+            dispatch(setError(parseApiError(error)))
+            throw error
+        }
     }
-}
 
-export const deleteSubtask = (id: number, taskId: number) => async (dispatch: Dispatch) => {
-    try {
-        await tasksApi.deleteSubtask(id)
-        dispatch(removeSubtask({ taskId, subtaskId: id }))
-    } catch (error: unknown) {
-        dispatch(setError(parseApiError(error)))
-        throw error
+export const transferWorkspaceOwnership = (workspaceId: number, userId: number) =>
+    async (dispatch: Dispatch) => {
+        try {
+            await tasksApi.transferWorkspaceOwnership(workspaceId, userId)
+            await refreshWorkspace(dispatch, workspaceId)
+        } catch (error: unknown) {
+            dispatch(setError(parseApiError(error)))
+            throw error
+        }
     }
-}
+
+export const removeWorkspaceMember = (workspaceId: number, userId: number) =>
+    async (dispatch: Dispatch) => {
+        try {
+            await tasksApi.removeWorkspaceMember(workspaceId, userId)
+            await refreshWorkspace(dispatch, workspaceId)
+        } catch (error: unknown) {
+            dispatch(setError(parseApiError(error)))
+            throw error
+        }
+    }
+
+export const leaveWorkspace = (workspaceId: number, newOwnerId?: number | null) =>
+    async (dispatch: Dispatch) => {
+        try {
+            await tasksApi.leaveWorkspace(workspaceId, newOwnerId)
+            dispatch(removeWorkspace(workspaceId))
+        } catch (error: unknown) {
+            dispatch(setError(parseApiError(error)))
+            throw error
+        }
+    }
 
 export type { Task }

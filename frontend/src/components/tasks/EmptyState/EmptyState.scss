@@ -23,3 +23,10 @@
     font-size: map.get($font-size, sm);
     line-height: map.get($line-height, normal);
 }
+
+.empty-state__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}

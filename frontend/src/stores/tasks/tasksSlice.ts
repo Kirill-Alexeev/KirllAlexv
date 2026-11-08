@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type {
     TasksState,
     Task,
-    Subtask,
     Tag,
     Workspace,
     WorkspaceDetail,
@@ -100,33 +99,6 @@ const tasksSlice = createSlice({
         resetFilters: (state) => {
             state.filters = initialFilters
         },
-        addSubtask: (state, action: PayloadAction<{ taskId: number; subtask: Subtask }>) => {
-            const task = state.tasks.find(t => t.id === action.payload.taskId)
-            if (task) {
-                task.subtasks_count += 1
-                if (task.subtasks) {
-                    task.subtasks.push(action.payload.subtask)
-                } else {
-                    task.subtasks = [action.payload.subtask]
-                }
-            }
-        },
-        updateSubtask: (state, action: PayloadAction<Subtask>) => {
-            const task = state.tasks.find(t => t.id === action.payload.parent_task)
-            if (task?.subtasks) {
-                const idx = task.subtasks.findIndex(s => s.id === action.payload.id)
-                if (idx !== -1) task.subtasks[idx] = action.payload
-            }
-        },
-        removeSubtask: (state, action: PayloadAction<{ taskId: number; subtaskId: number }>) => {
-            const task = state.tasks.find(t => t.id === action.payload.taskId)
-            if (task) {
-                task.subtasks_count = Math.max(0, task.subtasks_count - 1)
-                if (task.subtasks) {
-                    task.subtasks = task.subtasks.filter(s => s.id !== action.payload.subtaskId)
-                }
-            }
-        },
     },
 })
 
@@ -149,9 +121,6 @@ export const {
     setCurrentWorkspace,
     setFilters,
     resetFilters,
-    addSubtask,
-    updateSubtask,
-    removeSubtask,
 } = tasksSlice.actions
 
 export default tasksSlice.reducer

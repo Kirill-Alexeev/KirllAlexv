@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from .models import Tag, Workspace, WorkspaceMembership, Task, Subtask, Comment
+from .models import Tag, Workspace, WorkspaceMembership, Task, Comment
 
 
 @admin.register(Tag)
@@ -50,10 +50,12 @@ class WorkspaceMembershipAdmin(admin.ModelAdmin):
 
 
 class SubtaskInline(admin.TabularInline):
-    model = Subtask
-    extra = 1
-    fields = ['title', 'status', 'assignee', 'created_at']
-    raw_id_fields = ['assignee']
+    model = Task
+    fk_name = 'parent'
+    verbose_name = 'подзадача'
+    verbose_name_plural = 'подзадачи'
+    extra = 0
+    fields = ['title', 'status', 'priority', 'due_date', 'created_at']
     readonly_fields = ['created_at']
 
 
@@ -114,6 +116,7 @@ class TaskAdmin(admin.ModelAdmin):
             'fields': (
                 'owner',
                 'workspace',
+                'parent',
                 'due_date',
                 'deadline',
                 'status',
@@ -139,7 +142,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     inlines = [SubtaskInline, CommentInline]
 
-    raw_id_fields = ['owner', 'workspace']
+    raw_id_fields = ['owner', 'workspace', 'parent']
 
     list_per_page = 25
 
@@ -152,103 +155,3 @@ class TaskAdmin(admin.ModelAdmin):
     def assignees_count(self, obj):
         return obj.assignees.count()
     assignees_count.short_description = 'исполнителей'
-
-
-@admin.register(Subtask)
-class SubtaskAdmin(admin.ModelAdmin):
-    list_display = [
-        'title',
-        'parent_task',
-        'status',
-        'assignee',
-        'created_at'
-    ]
-
-    list_filter = [
-        'status',
-        'created_at',
-        'parent_task'
-    ]
-
-    search_fields = [
-        'title',
-        'description',
-        'parent_task__title',
-        'assignee__username'
-    ]
-
-    readonly_fields = ['created_at']
-
-    raw_id_fields = ['parent_task', 'assignee']
-
-    fieldsets = (
-        (None, {
-            'fields': ('title', 'description', 'parent_task')
-        }),
-        (_('Статус и исполнитель'), {
-            'fields': ('status', 'assignee')
-        }),
-        (_('Даты'), {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
-        }),
-    )
-
-    list_per_page = 20
-
-
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = [
-        'task',
-        'author',
-        'text_short',
-        'created_at'
-    ]
-
-    list_filter = [
-        'created_at',
-        'author',
-        'task'
-    ]
-
-    search_fields = [
-        'text',
-        'author__username',
-        'task__title'
-    ]
-
-    readonly_fields = [
-        'created_at',
-        'updated_at',
-        'author'
-    ]
-
-    fieldsets = (
-        (None, {
-            'fields': ('task', 'author', 'text')
-        }),
-        (_('Даты'), {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-
-    raw_id_fields = ['task', 'author']
-
-    list_per_page = 25
-
-    def text_short(self, obj):
-        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text
-    text_short.short_description = 'текст'
-
-    def save_model(self, request, obj, form, change):
-        if not change:  # Только при создании
-            obj.author = request.user
-        super().save_model(request, obj, form, change)
-
-
-# Дополнительные настройки админки
-admin.site.site_header = 'Администрирование планировщика задач'
-admin.site.site_title = _('Планировщик задач')
-admin.site.index_title = _('Управление задачами и рабочими пространствами')

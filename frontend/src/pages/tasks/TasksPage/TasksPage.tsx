@@ -23,7 +23,7 @@ import {
     deleteCompletedTasks,
     deleteWorkspace,
 } from '@/stores/tasks/tasksActions'
-import { setCurrentTask } from '@/stores/tasks/tasksSlice'
+import { setCurrentTask, setTags } from '@/stores/tasks/tasksSlice'
 import { TASK_STATUS, filterTasks, sortTasksByPriority } from '@/utils/tasksUtils'
 import './TasksPage.scss'
 
@@ -47,6 +47,11 @@ export const TasksPage: React.FC = () => {
     const [editOpen, setEditOpen] = useState(false)
     const [workspaceModalOpen, setWorkspaceModalOpen] = useState(false)
     const [deleteWorkspaceId, setDeleteWorkspaceId] = useState<number | null>(null)
+
+    // Сбрасываем теги пространства, если пришли со страницы пространства
+    useEffect(() => {
+        dispatch(setTags([]))
+    }, [dispatch])
 
     useEffect(() => {
         dispatch(fetchTags() as any)
@@ -78,7 +83,7 @@ export const TasksPage: React.FC = () => {
         const next = task.status === TASK_STATUS.COMPLETED
             ? TASK_STATUS.ACTIVE
             : TASK_STATUS.COMPLETED
-        dispatch(changeTaskStatus(task.id, next) as any)
+        dispatch(changeTaskStatus(task.id, next) as any).catch(() => {})
     }
 
     const handleTaskClick = (task: Task) => {

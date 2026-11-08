@@ -1,0 +1,43 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.leave-workspace-modal-backdrop {
+    .modal {
+        border: 1px solid rgba(map.get($colors, error), 0.6);
+    }
+}
+
+.leave-workspace-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.leave-workspace-modal__text {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-1);
+    line-height: map.get($line-height, normal);
+}
+
+.leave-workspace-modal__field {
+    @include flex-column;
+    gap: 6px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+
+    select {
+        @include styled-select;
+    }
+}
+
+.leave-workspace-modal__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.leave-workspace-modal__footer {
+    @include flex-end;
+    gap: 8px;
+}

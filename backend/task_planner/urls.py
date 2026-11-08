@@ -8,7 +8,6 @@ router.register('workspaces', views.WorkspaceViewSet, basename='workspace')
 router.register('workspace-memberships',
                 views.WorkspaceMembershipViewSet, basename='workspacemembership')
 router.register('tasks', views.TaskViewSet, basename='task')
-router.register('subtasks', views.SubtaskViewSet, basename='subtask')
 router.register('comments', views.CommentViewSet, basename='comment')
 
 urlpatterns = [

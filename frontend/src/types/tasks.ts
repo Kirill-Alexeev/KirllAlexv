@@ -5,6 +5,18 @@ export interface Tag {
     title: string
     description: string
     user: number
+    /** null — личный тег пользователя, иначе тег рабочего пространства */
+    workspace: number | null
+}
+
+export interface WorkspaceInvitePreview {
+    id: number
+    title: string
+    description: string
+    owner: Pick<User, 'id' | 'username' | 'first_name' | 'last_name'>
+    members_count: number
+    invite_code: string
+    is_member: boolean
 }
 
 export const WORKSPACE_ROLE = {
@@ -30,6 +42,8 @@ export interface Workspace {
     created_at: string
     updated_at: string
     members_count: number
+    /** Роль текущего пользователя (1 — участник, 2 — админ, 3 — владелец) */
+    my_role: number | null
 }
 
 export interface WorkspaceDetail extends Workspace {
@@ -52,19 +66,23 @@ export interface Task {
     updated_at: string
     is_overdue: boolean
     is_personal: boolean
+    /** id родительской задачи, если это подзадача */
+    parent: number | null
+    parent_title: string | null
     subtasks_count: number
+    completed_subtasks_count: number
+    /** Может ли текущий пользователь отметить задачу выполненной / вернуть в работу */
+    can_complete: boolean
     comments_count: number
-    subtasks?: Subtask[]
+    /** Комментарии других участников, появившиеся после последнего просмотра */
+    unread_comments_count: number
+    comments_last_read_at: string | null
 }
 
-export interface Subtask {
-    id: number
-    title: string
-    description: string
-    status: number
-    parent_task: number
-    assignee: User | null
-    created_at: string
+export interface ChangeStatusResponse {
+    task: Task
+    /** Родительская задача, если её статус изменился вместе с подзадачей */
+    parent: Task | null
 }
 
 export interface Comment {
@@ -80,6 +98,7 @@ export interface CreateTaskData {
     title: string
     description?: string
     workspace?: number | null
+    parent?: number | null
     due_date?: string | null
     deadline?: string | null
     priority?: number

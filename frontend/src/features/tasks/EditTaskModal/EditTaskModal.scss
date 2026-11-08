@@ -86,3 +86,149 @@
     gap: 8px;
     margin-left: auto;
 }
+
+.edit-task-modal__saved {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, accent);
+}
+
+.edit-task-modal__status {
+    @include flex-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(map.get($colors, gray-4), 0.8);
+    background: rgba(map.get($colors, bg-5), 0.5);
+
+    &--done {
+        border-color: rgba(map.get($colors, accent), 0.6);
+        background: rgba(map.get($colors, accent), 0.08);
+    }
+}
+
+.edit-task-modal__status-text {
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
+}
+
+.edit-task-modal__status-sub {
+    font-weight: map.get($font-weight, normal);
+    color: map.get($colors, gray-2);
+}
+
+.edit-task-modal__hint {
+    margin: -6px 0 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+}
+
+// ===== Карточка задачи: задача по центру, подзадачи справа, комментарии снизу =====
+.task-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-areas:
+        'main side'
+        'comments side';
+    grid-template-rows: auto 1fr;
+    column-gap: 24px;
+
+    @include tablet {
+        grid-template-columns: minmax(0, 1fr) 260px;
+    }
+
+    @include mobile {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            'main'
+            'side'
+            'comments';
+        row-gap: 16px;
+    }
+}
+
+.task-detail__main {
+    grid-area: main;
+    min-width: 0;
+    @include flex-column;
+    gap: 14px;
+}
+
+.task-detail__side {
+    grid-area: side;
+    align-self: start;
+    position: sticky;
+    top: 0;
+    @include flex-column;
+    gap: 8px;
+
+    @include mobile {
+        position: static;
+    }
+}
+
+.task-detail__comments {
+    grid-area: comments;
+    min-width: 0;
+}
+
+.task-detail__nav {
+    @include flex-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.task-detail__back {
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: map.get($colors, gray-2);
+    font-size: map.get($font-size, sm);
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+        color: map.get($colors, accent);
+    }
+}
+
+.task-detail__pager {
+    @include flex-start;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.task-detail__pager-label {
+    min-width: 56px;
+    text-align: center;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+}
+
+.task-detail__pager-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid map.get($colors, gray-4);
+    border-radius: 8px;
+    background: map.get($colors, bg-5);
+    color: map.get($colors, light);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+        border-color: map.get($colors, accent);
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+}

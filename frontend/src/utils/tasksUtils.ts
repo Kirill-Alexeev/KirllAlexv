@@ -230,29 +230,44 @@ export const sortTasksByPriority = (tasks: Task[]): Task[] => {
     })
 }
 
+export const ROLE_LABELS: Record<number, string> = {
+    [WORKSPACE_ROLE.MEMBER]: 'Участник',
+    [WORKSPACE_ROLE.ADMIN]: 'Администратор',
+    [WORKSPACE_ROLE.OWNER]: 'Владелец',
+}
+
+/** Личной задачей управляет автор, задачей пространства — любой его участник */
 export const canManageTask = (
     task: Task,
     user: User | null,
     membership: WorkspaceMembership | null | undefined,
 ): boolean => {
     if (!user) return false
-    if (task.owner.id === user.id) return true
+    if (task.owner?.id === user.id) return true
     if (!task.workspace) return false
-    if (!membership) return false
-    return membership.role >= WORKSPACE_ROLE.ADMIN
+    return Boolean(membership)
 }
 
-export const canCompleteTask = (
-    task: Task,
-    user: User | null,
-    membership: WorkspaceMembership | null | undefined,
-): boolean => {
-    if (!user) return false
-    if (canManageTask(task, user, membership)) return true
-    if (task.assignees.some(a => a.id === user.id)) return true
-    if (membership) return true
-    return false
+export const isWorkspaceAdmin = (membership: WorkspaceMembership | null | undefined): boolean =>
+    Boolean(membership && membership.role >= WORKSPACE_ROLE.ADMIN)
+
+export const getMemberName = (user: Pick<User, 'username' | 'first_name' | 'last_name'>): string =>
+    user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.username
+
+/** Почему нельзя переключить статус задачи (null — можно).
+ *  Права считает бэкенд: исполнитель или админ/владелец, а без исполнителя — любой участник */
+export const getCompletionBlockReason = (task: Task): string | null => {
+    if (task.can_complete === false) {
+        return 'Отметить задачу может только исполнитель, администратор или владелец'
+    }
+    if (task.status === TASK_STATUS.COMPLETED) return null
+    const total = task.subtasks_count ?? 0
+    const done = task.completed_subtasks_count ?? 0
+    if (total > done) return `Сначала выполните подзадачи (${done}/${total})`
+    return null
 }
+
+export const canCompleteTask = (task: Task): boolean => getCompletionBlockReason(task) === null
 
 export const getUserMembership = (
     members: WorkspaceMembership[] | undefined,

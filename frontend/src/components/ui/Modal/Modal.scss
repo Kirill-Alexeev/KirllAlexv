@@ -32,6 +32,10 @@
     &--lg {
         width: 700px;
     }
+
+    &--xl {
+        width: 1080px;
+    }
 }
 
 .modal__header {
@@ -91,7 +95,8 @@
 
         &--sm,
         &--md,
-        &--lg {
+        &--lg,
+        &--xl {
             width: 100%;
         }
     }

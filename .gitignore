@@ -1,2 +1,6 @@
 venv
 .claude
+# Django: собранная статика и загруженные файлы
+backend/staticfiles/
+backend/media/
+__pycache__/

@@ -21,7 +21,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_photo_url(self, obj):
         if obj.photo:
-            return obj.photo.url
+            request = self.context.get('request')
+            # Фронтенд живёт на другом домене, поэтому отдаём абсолютный URL
+            return request.build_absolute_uri(obj.photo.url) if request else obj.photo.url
         return None
 
 

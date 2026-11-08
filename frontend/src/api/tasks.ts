@@ -5,18 +5,22 @@ import type {
     Task,
     Workspace,
     WorkspaceDetail,
-    Subtask,
+    ChangeStatusResponse,
     Comment,
     CreateTaskData,
     CreateWorkspaceData,
+    WorkspaceInvitePreview,
 } from '@/types'
 
 export const tasksApi = {
-    getTags: async () => {
-        const response = await api.get<Tag[] | { results: Tag[] }>('/tasks/tags/')
+    /** Без workspaceId — личные теги, с ним — теги пространства */
+    getTags: async (workspaceId?: number | null) => {
+        const response = await api.get<Tag[] | { results: Tag[] }>('/tasks/tags/', {
+            params: workspaceId ? { workspace_id: workspaceId } : {},
+        })
         return { ...response, data: unwrapList<Tag>(response.data) }
     },
-    createTag: (data: { title: string; description?: string }) =>
+    createTag: (data: { title: string; description?: string; workspace?: number | null }) =>
         api.post<Tag>('/tasks/tags/', data),
     updateTag: (id: number, data: Partial<Tag>) =>
         api.put<Tag>(`/tasks/tags/${id}/`, data),
@@ -34,6 +38,10 @@ export const tasksApi = {
     updateWorkspace: (id: number, data: Partial<CreateWorkspaceData>) =>
         api.patch<Workspace>(`/tasks/workspaces/${id}/`, data),
     deleteWorkspace: (id: number) => api.delete(`/tasks/workspaces/${id}/`),
+    previewWorkspace: (inviteCode: string) =>
+        api.get<WorkspaceInvitePreview>('/tasks/workspaces/preview/', {
+            params: { invite_code: inviteCode },
+        }),
     joinWorkspace: (inviteCode: string) =>
         api.post<Workspace>('/tasks/workspaces/join/', { invite_code: inviteCode }),
     addWorkspaceMember: (workspaceId: number, userId: number, role?: number) =>
@@ -43,6 +51,16 @@ export const tasksApi = {
         }),
     removeWorkspaceMember: (workspaceId: number, userId: number) =>
         api.delete(`/tasks/workspaces/${workspaceId}/remove_member/${userId}/`),
+    setWorkspaceMemberRole: (workspaceId: number, userId: number, role: number) =>
+        api.post(`/tasks/workspaces/${workspaceId}/set_role/`, { user_id: userId, role }),
+    transferWorkspaceOwnership: (workspaceId: number, userId: number) =>
+        api.post<WorkspaceDetail>(`/tasks/workspaces/${workspaceId}/transfer_ownership/`, {
+            user_id: userId,
+        }),
+    leaveWorkspace: (workspaceId: number, newOwnerId?: number | null) =>
+        api.post(`/tasks/workspaces/${workspaceId}/leave/`, {
+            new_owner_id: newOwnerId ?? null,
+        }),
 
     getTasks: async () => {
         const response = await api.get<Task[] | { results: Task[] }>('/tasks/tasks/')
@@ -64,23 +82,10 @@ export const tasksApi = {
         api.patch<Task>(`/tasks/tasks/${id}/`, data),
     deleteTask: (id: number) => api.delete(`/tasks/tasks/${id}/`),
     changeTaskStatus: (id: number, status: number) =>
-        api.post(`/tasks/tasks/${id}/change_status/`, { status }),
-
-    getSubtasks: async (taskId?: number) => {
-        const response = await api.get<Subtask[] | { results: Subtask[] }>('/tasks/subtasks/', {
-            params: taskId ? { parent_task: taskId } : {},
-        })
-        return { ...response, data: unwrapList<Subtask>(response.data) }
-    },
-    createSubtask: (data: {
-        title: string
-        description?: string
-        parent_task: number
-        assignee?: number | null
-    }) => api.post<Subtask>('/tasks/subtasks/', data),
-    updateSubtask: (id: number, data: Partial<Subtask>) =>
-        api.patch<Subtask>(`/tasks/subtasks/${id}/`, data),
-    deleteSubtask: (id: number) => api.delete(`/tasks/subtasks/${id}/`),
+        api.post<ChangeStatusResponse>(`/tasks/tasks/${id}/change_status/`, { status }),
+    getSubtasks: (taskId: number) => api.get<Task[]>(`/tasks/tasks/${taskId}/subtasks/`),
+    markCommentsRead: (id: number) =>
+        api.post<Task>(`/tasks/tasks/${id}/mark_comments_read/`),
 
     getComments: async (taskId?: number) => {
         const response = await api.get<Comment[] | { results: Comment[] }>('/tasks/comments/', {
@@ -90,4 +95,5 @@ export const tasksApi = {
     },
     createComment: (data: { task: number; text: string }) =>
         api.post<Comment>('/tasks/comments/', data),
+    deleteComment: (id: number) => api.delete(`/tasks/comments/${id}/`),
 }

@@ -4,6 +4,9 @@ import type { Workspace } from '@/types'
 import { Button } from '@/components/ui'
 import { EmptyState } from '@/components/tasks/EmptyState/EmptyState'
 import { InviteLinkModal } from '@/features/tasks/InviteLinkModal/InviteLinkModal'
+import { LeaveWorkspaceModal } from '@/features/tasks/LeaveWorkspaceModal/LeaveWorkspaceModal'
+import { JoinWorkspaceModal } from '@/features/tasks/JoinWorkspaceModal/JoinWorkspaceModal'
+import { ROLE_LABELS } from '@/utils/tasksUtils'
 import addIcon from '@/assets/icons/add.svg'
 import './WorkspacesView.scss'
 
@@ -22,15 +25,24 @@ export const WorkspacesView: React.FC<WorkspacesViewProps> = ({
 }) => {
     const navigate = useNavigate()
     const [inviteWorkspace, setInviteWorkspace] = useState<Workspace | null>(null)
+    const [leaveTarget, setLeaveTarget] = useState<Workspace | null>(null)
+    const [joinOpen, setJoinOpen] = useState(false)
+
+    const joinModal = <JoinWorkspaceModal isOpen={joinOpen} onClose={() => setJoinOpen(false)} />
 
     if (!workspaces.length) {
         return (
-            <EmptyState
-                title="Нет рабочих пространств"
-                description="Создайте пространство и поделитесь ссылкой с командой"
-                actionLabel="Создать пространство"
-                onAction={onCreate}
-            />
+            <>
+                <EmptyState
+                    title="Нет рабочих пространств"
+                    description="Создайте пространство или присоединитесь к существующему по ссылке или коду"
+                    actionLabel="Создать пространство"
+                    onAction={onCreate}
+                    secondaryActionLabel="Присоединиться по коду"
+                    onSecondaryAction={() => setJoinOpen(true)}
+                />
+                {joinModal}
+            </>
         )
     }
 
@@ -40,12 +52,17 @@ export const WorkspacesView: React.FC<WorkspacesViewProps> = ({
                 <div>
                     <h2 className="workspaces-view__title">Рабочие пространства</h2>
                     <p className="workspaces-view__subtitle">
-                        Общие доски с доступом по ссылке. Удалять задачи может только админ.
+                        Общие доски с доступом по ссылке. Задачи ведут все участники, удалить пространство может только владелец.
                     </p>
                 </div>
-                <Button variant="primary" icon={addIcon} onClick={onCreate}>
-                    Создать
-                </Button>
+                <div className="workspaces-view__header-actions">
+                    <Button variant="outline" onClick={() => setJoinOpen(true)}>
+                        Присоединиться
+                    </Button>
+                    <Button variant="primary" icon={addIcon} onClick={onCreate}>
+                        Создать
+                    </Button>
+                </div>
             </header>
 
             <div className="workspaces-view__grid">
@@ -65,6 +82,9 @@ export const WorkspacesView: React.FC<WorkspacesViewProps> = ({
                                     <span>
                                         {isOwner ? 'Владелец' : `Владелец: ${workspace.owner.username}`}
                                     </span>
+                                    {!isOwner && workspace.my_role && (
+                                        <span>Вы: {ROLE_LABELS[workspace.my_role]?.toLowerCase()}</span>
+                                    )}
                                 </div>
                             </div>
                             <div className="workspace-card__actions">
@@ -82,13 +102,21 @@ export const WorkspacesView: React.FC<WorkspacesViewProps> = ({
                                 >
                                     Ссылка
                                 </Button>
-                                {isOwner && (
+                                {isOwner ? (
                                     <Button
                                         variant="danger"
                                         size="sm"
                                         onClick={() => onDelete(workspace.id)}
                                     >
                                         Удалить
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="danger"
+                                        size="sm"
+                                        onClick={() => setLeaveTarget(workspace)}
+                                    >
+                                        Покинуть
                                     </Button>
                                 )}
                             </div>
@@ -102,6 +130,16 @@ export const WorkspacesView: React.FC<WorkspacesViewProps> = ({
                 onClose={() => setInviteWorkspace(null)}
                 workspaceTitle={inviteWorkspace?.title}
                 inviteCode={inviteWorkspace?.invite_code}
+            />
+
+            {joinModal}
+
+            <LeaveWorkspaceModal
+                isOpen={leaveTarget !== null}
+                onClose={() => setLeaveTarget(null)}
+                onLeft={() => setLeaveTarget(null)}
+                workspaceId={leaveTarget?.id ?? null}
+                workspaceTitle={leaveTarget?.title}
             />
         </div>
     )

@@ -7,7 +7,7 @@ from users.models import User
 
 
 class Tag(models.Model):
-    """Модель для пользовательских тегов/меток"""
+    """Тег: личный (workspace пустой) или общий тег рабочего пространства"""
     title = models.CharField('название', max_length=50)
     description = models.TextField('описание', blank=True)
     user = models.ForeignKey(
@@ -16,11 +16,30 @@ class Tag(models.Model):
         related_name='tags',
         verbose_name='пользователь'
     )
+    workspace = models.ForeignKey(
+        'Workspace',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='tags',
+        verbose_name='рабочее пространство'
+    )
 
     class Meta:
         verbose_name = 'тег'
         verbose_name_plural = 'теги'
-        unique_together = ('title', 'user')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'user'],
+                condition=models.Q(workspace__isnull=True),
+                name='unique_personal_tag_title',
+            ),
+            models.UniqueConstraint(
+                fields=['title', 'workspace'],
+                condition=models.Q(workspace__isnull=False),
+                name='unique_workspace_tag_title',
+            ),
+        ]
 
     def __str__(self):
         return self.title
@@ -145,6 +164,14 @@ class Task(models.Model):
         related_name='assigned_tasks',
         verbose_name='исполнители'
     )
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='subtasks',
+        verbose_name='родительская задача'
+    )
 
     class Meta:
         verbose_name = 'задача'
@@ -175,39 +202,30 @@ class Task(models.Model):
         """Проверка, является ли задача личной (не в workspace)"""
         return self.workspace is None
 
+    @property
+    def is_subtask(self):
+        return self.parent_id is not None
 
-class Subtask(models.Model):
-    """Модель подзадачи"""
-    title = models.CharField('название', max_length=200)
-    description = models.TextField('описание', blank=True)
-    status = models.IntegerField(
-        'статус',
-        choices=Task.Status.choices,
-        default=Task.Status.ACTIVE
-    )
-    created_at = models.DateTimeField('дата создания', auto_now_add=True)
-    parent_task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-        related_name='subtasks',
-        verbose_name='родительская задача'
-    )
-    assignee = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='assigned_subtasks',
-        verbose_name='исполнитель'
-    )
+    def can_be_completed_by(self, user):
+        """Личную задачу отмечает автор. В пространстве: если есть исполнители —
+        только они или админ/владелец пространства, иначе любой участник"""
+        if not user or not user.is_authenticated:
+            return False
+        if not self.workspace_id:
+            return self.owner_id == user.id
+        workspace = self.workspace
+        if workspace.owner_id == user.id:
+            return True
+        membership = workspace.memberships.filter(user=user).first()
+        if not membership:
+            return False
+        if membership.role >= WorkspaceMembership.Role.ADMIN:
+            return True
+        assignee_ids = [a.id for a in self.assignees.all()]
+        return not assignee_ids or user.id in assignee_ids
 
-    class Meta:
-        verbose_name = 'подзадача'
-        verbose_name_plural = 'подзадачи'
-        ordering = ['created_at']
-
-    def __str__(self):
-        return f"{self.title} (подзадача {self.parent_task.title})"
+    def has_open_subtasks(self):
+        return self.subtasks.exclude(status=self.Status.COMPLETED).exists()
 
 
 class Comment(models.Model):
@@ -235,3 +253,28 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Комментарий от {self.author.username} к задаче '{self.task.title}'"
+
+
+class TaskReadState(models.Model):
+    """Когда пользователь последний раз читал комментарии задачи"""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='task_read_states',
+        verbose_name='пользователь'
+    )
+    task = models.ForeignKey(
+        Task,
+        on_delete=models.CASCADE,
+        related_name='read_states',
+        verbose_name='задача'
+    )
+    last_read_at = models.DateTimeField('прочитано до')
+
+    class Meta:
+        verbose_name = 'прочтение комментариев'
+        verbose_name_plural = 'прочтения комментариев'
+        unique_together = ('user', 'task')
+
+    def __str__(self):
+        return f"{self.user.username}: {self.task.title}"

@@ -55,11 +55,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         const name = newTag.trim()
         if (!name) return
         try {
-            const tag = await dispatch(createTag({ title: name }) as any)
+            const tag = await dispatch(createTag({ title: name, workspace: workspaceId }) as any)
             setTagId(tag.id)
             setNewTag('')
-        } catch {
-            setError('Не удалось создать тег')
+        } catch (e: any) {
+            const titleError = e?.response?.data?.title
+            setError(titleError ? String(titleError) : 'Не удалось создать тег')
         }
     }
 

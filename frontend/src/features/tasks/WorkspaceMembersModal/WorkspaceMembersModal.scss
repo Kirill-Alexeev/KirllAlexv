@@ -1,0 +1,114 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.members-modal-backdrop {
+    .modal {
+        border: 1px solid rgba(map.get($colors, accent), 0.5);
+    }
+}
+
+.members-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.members-modal__hint {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+    line-height: map.get($line-height, normal);
+}
+
+.members-modal__list {
+    @include flex-column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.members-modal__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto 32px;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 12px 14px;
+    background: map.get($colors, bg-3);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.55);
+    border-radius: 12px;
+}
+
+.members-modal__info {
+    @include flex-column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.members-modal__name {
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, medium);
+    color: map.get($colors, light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.members-modal__self {
+    color: map.get($colors, gray-2);
+    font-weight: map.get($font-weight, normal);
+}
+
+.members-modal__username {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+}
+
+.members-modal__role {
+    justify-self: end;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-1);
+    background: rgba(map.get($colors, bg-5), 0.8);
+    white-space: nowrap;
+
+    &--2 {
+        color: map.get($colors, info);
+        background: rgba(map.get($colors, info), 0.12);
+    }
+
+    &--3 {
+        color: map.get($colors, accent);
+        background: rgba(map.get($colors, accent), 0.14);
+    }
+}
+
+.members-modal__menu {
+    display: flex;
+    justify-content: flex-end;
+    min-height: 32px;
+}
+
+.members-modal__actions {
+    @include flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.members-modal__confirm {
+    grid-column: 1 / -1;
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(map.get($colors, gray-4), 0.5);
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, light);
+}
+
+.members-modal__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}

@@ -1,0 +1,78 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.join-workspace-modal-backdrop {
+    .modal {
+        border: 1px solid rgba(map.get($colors, accent), 0.5);
+    }
+}
+
+.join-workspace-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.join-workspace-modal__field {
+    @include flex-column;
+    gap: 6px;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+
+    input {
+        @include form-control;
+    }
+}
+
+.join-workspace-modal__error,
+.invite-card__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.join-workspace-modal__footer,
+.invite-card__footer {
+    @include flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+// ===== Карточка подтверждения приглашения =====
+.invite-card {
+    @include flex-column;
+    gap: 12px;
+    text-align: left;
+}
+
+.invite-card__eyebrow {
+    margin: 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, accent);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.invite-card__title {
+    margin: 0;
+    font-size: map.get($font-size, shl);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+    word-break: break-word;
+}
+
+.invite-card__description {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-1);
+    line-height: map.get($line-height, normal);
+}
+
+.invite-card__meta {
+    @include flex-start;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, gray-2);
+}
+
