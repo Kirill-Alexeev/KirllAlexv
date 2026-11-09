@@ -17,6 +17,28 @@ export interface User {
     updated_at: string
 }
 
+export interface ProfileUpdateData {
+    username: string
+    first_name: string
+    last_name: string
+    email: string
+    phone: string | null
+    bio: string | null
+    date_of_birth: string | null
+}
+
+export interface ProfileStats {
+    total: number
+    completed: number
+    completed_week: number
+    completed_month: number
+    unfinished: number
+    overdue: number
+    completion_rate: number
+    workspaces: number
+    events: number
+}
+
 export interface AuthState {
     user: User | null
     token: string | null

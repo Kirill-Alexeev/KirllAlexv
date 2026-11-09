@@ -2,7 +2,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
 
 export type InputSize = 'sm' | 'md' | 'lg'
-export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'file' | 'select' | 'textarea'
+export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'file' | 'date' | 'select' | 'textarea'
 
 export interface BaseComponentProps {
     className?: string

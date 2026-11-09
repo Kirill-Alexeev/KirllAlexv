@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
@@ -7,9 +8,12 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from calendar_events.services import parse_date_range
+from notifications.services import client_date
 from users.models import User
 from .models import (
-    Tag, Workspace, WorkspaceMembership, Task, Comment, TaskReadState
+    Tag, Workspace, WorkspaceMembership, Task, Comment, TaskReadState, agenda_tasks,
+    roll_forward_tasks,
 )
 from .serializers import (
     TagSerializer, WorkspaceSerializer, WorkspaceDetailSerializer,
@@ -455,6 +459,26 @@ class TaskViewSet(viewsets.ModelViewSet):
             {'error': 'workspace_id parameter required'},
             status=status.HTTP_400_BAD_REQUEST
         )
+
+    @action(detail=False, methods=['get'])
+    def calendar(self, request):
+        """Задачи пользователя с датой в диапазоне ?from=&to= (дата или, если её нет, дедлайн)"""
+        start, end = parse_date_range(request.query_params)
+        tasks = agenda_tasks(request.user).filter(
+            Q(due_date__range=(start, end)) |
+            Q(due_date__isnull=True, deadline__range=(start, end))
+        )
+        return Response(TaskSerializer(
+            tasks, many=True, context=self.get_serializer_context()).data)
+
+    @action(detail=False, methods=['post'])
+    def roll_forward(self, request):
+        """Сдвигает дату задач пользователя на его «сегодня» (не дальше суток от сервера)"""
+        server_day = timezone.localdate()
+        one_day = timedelta(days=1)
+        day = client_date(request.data.get('date'))
+        day = min(max(day, server_day - one_day), server_day + one_day)
+        return Response({'moved': roll_forward_tasks(request.user, day)})
 
     @action(detail=True, methods=['post'])
     def mark_comments_read(self, request, pk=None):

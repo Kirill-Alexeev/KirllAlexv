@@ -42,6 +42,15 @@
             font-size: map.get($font-size, sm);
         }
     }
+
+    &--xl {
+        width: 112px;
+        height: 112px;
+
+        .avatar__initials {
+            font-size: map.get($font-size, shl);
+        }
+    }
 }
 
 .avatar__initials {

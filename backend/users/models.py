@@ -34,6 +34,12 @@ class User(AbstractUser):
         help_text='Дата рождения пользователя'
     )
 
+    sidebar_actions = models.JSONField(
+        'быстрые действия в сайдбаре',
+        default=list,
+        blank=True
+    )
+
     created_at = models.DateTimeField(
         'дата создания',
         auto_now_add=True

@@ -5,6 +5,9 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import login, logout
 from django.middleware.csrf import get_token
 from django.db import transaction
+from django.db.models import Q
+from notifications.services import client_date
+from task_planner.models import Workspace, task_stats
 from .models import User
 from .serializers import (
     UserSerializer, UserCreateSerializer, UserUpdateSerializer,
@@ -27,7 +30,7 @@ def register(request):
         user = serializer.save()
         token, created = Token.objects.get_or_create(user=user)
         return Response({
-            'user': UserSerializer(user).data,
+            'user': UserSerializer(user, context={'request': request}).data,
             'token': token.key
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -43,7 +46,7 @@ def login_view(request):
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
         return Response({
-            'user': UserSerializer(user).data,
+            'user': UserSerializer(user, context={'request': request}).data,
             'token': token.key
         })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -61,8 +64,22 @@ def logout_view(request):
 @api_view(['GET'])
 def user_profile(request):
     """Получить профиль текущего пользователя"""
-    serializer = UserSerializer(request.user)
+    serializer = UserSerializer(request.user, context={'request': request})
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def profile_stats(request):
+    """Статистика для страницы профиля"""
+    user = request.user
+    day = client_date(request.query_params.get('date'))
+    return Response({
+        **task_stats(user, day),
+        'workspaces': Workspace.objects.filter(
+            Q(owner=user) | Q(memberships__user=user)
+        ).distinct().count(),
+        'events': user.calendar_events.count(),
+    })
 
 
 @api_view(['PUT'])
@@ -75,14 +92,14 @@ def update_profile(request):
     )
     if serializer.is_valid():
         serializer.save()
-        return Response(UserSerializer(request.user).data)
+        return Response(UserSerializer(request.user, context={'request': request}).data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 def change_password(request):
     """Сменить пароль"""
-    serializer = ChangePasswordSerializer(data=request.data)
+    serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         if not request.user.check_password(serializer.validated_data['old_password']):
             return Response(
@@ -90,9 +107,13 @@ def change_password(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        request.user.set_password(serializer.validated_data['new_password'])
-        request.user.save()
-        return Response({'detail': 'Пароль успешно изменен'})
+        with transaction.atomic():
+            request.user.set_password(serializer.validated_data['new_password'])
+            request.user.save()
+            # Новый токен: другие устройства со старым паролем должны выйти из аккаунта
+            Token.objects.filter(user=request.user).delete()
+            token = Token.objects.create(user=request.user)
+        return Response({'detail': 'Пароль успешно изменен', 'token': token.key})
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -107,8 +128,11 @@ def delete_account(request):
 
             logout(request)
 
-            user_id = user.id
+            photo = user.photo.name
+            storage = user.photo.storage
             user.delete()
+            if photo:
+                storage.delete(photo)
 
             return Response(
                 {'detail': 'Аккаунт успешно удален'},
@@ -144,3 +168,24 @@ def user_detail(request, pk):
             {'detail': 'Пользователь не найден'},
             status=status.HTTP_404_NOT_FOUND
         )
+
+
+SIDEBAR_ACTIONS = ('task', 'workspace_task', 'event')
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([permissions.IsAuthenticated])
+def sidebar_actions(request):
+    """Какие кнопки быстрого добавления показывать в сайдбаре"""
+    user = request.user
+    if request.method == 'PUT':
+        actions = request.data.get('actions')
+        if not isinstance(actions, list) or any(a not in SIDEBAR_ACTIONS for a in actions):
+            return Response(
+                {'error': 'Недопустимый список действий'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        # Порядок кнопок фиксированный, повторы отбрасываем
+        user.sidebar_actions = [a for a in SIDEBAR_ACTIONS if a in actions]
+        user.save(update_fields=['sidebar_actions'])
+    return Response({'actions': user.sidebar_actions})

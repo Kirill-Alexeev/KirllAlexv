@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -125,6 +126,7 @@ class Task(models.Model):
     description = models.TextField('описание', blank=True)
     created_at = models.DateTimeField('дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('дата обновления', auto_now=True)
+    completed_at = models.DateTimeField('когда завершена', null=True, blank=True)
     due_date = models.DateField('дата выполнения', null=True, blank=True)
     deadline = models.DateField('срок сдачи', null=True, blank=True)
     status = models.IntegerField(
@@ -190,6 +192,10 @@ class Task(models.Model):
             elif self.status == self.Status.OVERDUE:
                 # Задачу перенесли — она снова активна
                 self.status = self.Status.ACTIVE
+        if self.status != self.Status.COMPLETED:
+            self.completed_at = None
+        elif self.completed_at is None:
+            self.completed_at = timezone.now()
         super().save(*args, **kwargs)
 
     @property
@@ -226,6 +232,45 @@ class Task(models.Model):
 
     def has_open_subtasks(self):
         return self.subtasks.exclude(status=self.Status.COMPLETED).exists()
+
+
+def agenda_tasks(user):
+    """Задачи пользователя для календаря и уведомлений: личные и назначенные ему"""
+    return Task.objects.filter(
+        models.Q(workspace__isnull=True, owner=user) | models.Q(assignees=user),
+        parent__isnull=True,
+    ).distinct()
+
+
+def overdue_filter(day):
+    """Условие просрочки на дату для незавершённых задач"""
+    return models.Q(deadline__lt=day) | models.Q(deadline__isnull=True, due_date__lt=day)
+
+
+def task_stats(user, day):
+    """Статистика пользователя по его личным и назначенным задачам"""
+    tasks = agenda_tasks(user)
+    completed = tasks.filter(status=Task.Status.COMPLETED)
+    unfinished = tasks.exclude(status=Task.Status.COMPLETED)
+    now = timezone.now()
+    total = tasks.count()
+    completed_count = completed.count()
+    return {
+        'total': total,
+        'completed': completed_count,
+        'completed_week': completed.filter(completed_at__gte=now - timedelta(days=7)).count(),
+        'completed_month': completed.filter(completed_at__gte=now - timedelta(days=30)).count(),
+        'unfinished': unfinished.count(),
+        'overdue': unfinished.filter(overdue_filter(day)).count(),
+        'completion_rate': round(completed_count * 100 / total) if total else 0,
+    }
+
+
+def roll_forward_tasks(user, day):
+    """Незавершённые задачи с прошедшей датой переносятся на day, пока не наступил дедлайн"""
+    return agenda_tasks(user).exclude(status=Task.Status.COMPLETED).filter(
+        due_date__lt=day, deadline__gte=day
+    ).update(due_date=day)
 
 
 class Comment(models.Model):

@@ -5,9 +5,9 @@ import {
     PRIORITY_COLORS,
     formatShortDate,
     getEffectiveDate,
-    getCompletionBlockReason,
 } from '@/utils/tasksUtils'
 import { Avatar } from '@/components/ui/Avatar/Avatar'
+import { TaskCheckButton } from './TaskCheckButton'
 import { getMemberName } from '@/utils/tasksUtils'
 import calendarIcon from '@/assets/icons/calendar.svg'
 import './TaskCard.scss'
@@ -38,13 +38,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
     const showComments = Boolean(task.workspace) && commentsCount > 0
     const subtasksTotal = task.subtasks_count ?? 0
     const subtasksDone = task.completed_subtasks_count ?? 0
-    const blockReason = getCompletionBlockReason(task)
-    const toggleAllowed = canComplete && !blockReason
-
-    const handleToggle = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        if (toggleAllowed && onToggleStatus) onToggleStatus(task)
-    }
 
     return (
         <article
@@ -64,25 +57,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
             <div className="task-card__body">
                 <div className="task-card__header">
-                    <button
-                        type="button"
-                        className={`task-card__check ${isCompleted ? 'task-card__check--checked' : ''}`}
-                        onClick={handleToggle}
-                        disabled={!toggleAllowed}
-                        aria-label={isCompleted ? 'Вернуть в активные' : 'Завершить задачу'}
-                        title={blockReason ?? (isCompleted ? 'Вернуть в активные' : 'Отметить выполненной')}
-                    >
-                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <circle className="task-card__check-circle" cx="12" cy="12" r="8" strokeWidth="2" />
-                            <path
-                                className="task-card__check-mark"
-                                d="M8 12L11 15L16 9"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                    </button>
+                    <TaskCheckButton task={task} canComplete={canComplete} onToggle={onToggleStatus} />
                     <h3 className="task-card__title">{task.title}</h3>
                     {unreadCount > 0 && (
                         <span

@@ -64,6 +64,13 @@
     color: transparent;
 }
 
+.add-action__checkbox-custom img {
+    display: block;
+    width: 12px;
+    height: 12px;
+    filter: brightness(0);
+}
+
 .add-action__item--selected .add-action__checkbox-custom {
     border-color: map.get($colors, accent);
     background: map.get($colors, accent);
@@ -94,6 +101,12 @@
     border-radius: 12px;
     font-size: map.get($font-size, xs);
     font-weight: map.get($font-weight, medium);
+}
+
+.add-action__error {
+    margin: 0 0 12px;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
 }
 
 .add-action__footer {

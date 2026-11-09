@@ -23,6 +23,17 @@ export const classNames = (...classes: (string | undefined | null | false)[]): s
     return classes.filter(Boolean).join(' ')
 }
 
+/** Ошибки полей формы из ответа API: { поле: первое сообщение } */
+export const parseFieldErrors = (error: any): Record<string, string> => {
+    const data = error.response?.data
+    if (!data || typeof data !== 'object') return {}
+    return Object.fromEntries(
+        Object.entries(data)
+            .filter(([, messages]) => Array.isArray(messages))
+            .map(([field, messages]) => [field, String((messages as unknown[])[0])])
+    )
+}
+
 export const parseApiError = (error: any): string => {
     const data = error.response?.data
 

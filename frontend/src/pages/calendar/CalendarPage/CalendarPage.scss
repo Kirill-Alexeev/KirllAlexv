@@ -1,0 +1,243 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.calendar-page {
+    min-height: calc(100vh - 40px);
+}
+
+.calendar-page__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 20px;
+    align-items: start;
+    margin-top: 16px;
+
+    @media (max-width: 1199px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.calendar-page__month {
+    @include flex-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.calendar-page__current {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.calendar-page__title {
+    margin: 0;
+    font-size: map.get($font-size, xl);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.calendar-page__nav {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: 1px solid map.get($colors, gray-4);
+    border-radius: 10px;
+    background: map.get($colors, bg-5);
+    color: map.get($colors, light);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+        border-color: map.get($colors, accent);
+    }
+}
+
+.calendar-page__error {
+    margin: 0 0 10px;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.calendar-page__grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.calendar-cell {
+    @include flex-column;
+    gap: 3px;
+    min-width: 0;
+    min-height: 104px;
+    padding: 6px;
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 10px;
+    background: map.get($colors, bg-3);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: rgba(map.get($colors, accent), 0.45);
+    }
+
+    &--today .calendar-cell__number {
+        color: map.get($colors, accent);
+    }
+
+    &--selected {
+        border-color: map.get($colors, accent);
+    }
+
+    @include mobile {
+        min-height: 76px;
+        padding: 4px;
+    }
+}
+
+.calendar-cell__head {
+    @include flex-between;
+    gap: 4px;
+}
+
+.calendar-cell__number {
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.calendar-cell__weekday {
+    font-size: 1.1rem;
+    color: map.get($colors, gray-2);
+}
+
+.calendar-cell__event {
+    display: block;
+    padding: 1px 4px;
+    border-radius: 4px;
+    background: rgba(map.get($colors, info), 0.2);
+    color: map.get($colors, gray-1);
+    font-size: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--system {
+        background: rgba(map.get($colors, accent), 0.2);
+    }
+}
+
+.calendar-cell__more {
+    font-size: 1.1rem;
+    color: map.get($colors, gray-2);
+}
+
+.calendar-cell__tasks {
+    margin-top: auto;
+    font-size: 1.1rem;
+    color: map.get($colors, accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-page__day {
+    @include flex-column;
+    gap: 18px;
+    padding: 16px;
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 12px;
+    background: rgba(map.get($colors, bg-5), 0.55);
+}
+
+.calendar-page__day-title {
+    margin: 0;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.calendar-day-section {
+    @include flex-column;
+    gap: 8px;
+}
+
+.calendar-day-section__header {
+    @include flex-between;
+    gap: 8px;
+
+    h3 {
+        margin: 0;
+        font-size: map.get($font-size, sm);
+        font-weight: map.get($font-weight, semibold);
+        color: map.get($colors, gray-1);
+    }
+}
+
+.calendar-day-section__empty {
+    margin: 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+}
+
+.calendar-day-section__list {
+    @include flex-column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.calendar-item {
+    --item-accent: #{map.get($colors, gray-3)};
+
+    @include flex-start;
+    gap: 6px;
+    padding: 8px 8px 8px 10px;
+    border-left: 3px solid var(--item-accent);
+    border-radius: 8px;
+    background: map.get($colors, bg-3);
+
+    &--system {
+        --item-accent: #{map.get($colors, accent)};
+    }
+
+    &--event {
+        --item-accent: #{map.get($colors, info)};
+    }
+
+    &--completed .calendar-item__title {
+        text-decoration: line-through;
+        color: map.get($colors, gray-2);
+    }
+}
+
+.calendar-item__main {
+    @include flex-column;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+
+    &:is(button) {
+        cursor: pointer;
+    }
+}
+
+.calendar-item__title {
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, light);
+    overflow-wrap: anywhere;
+}
+
+.calendar-item__meta,
+.calendar-item__description {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+    overflow-wrap: anywhere;
+}

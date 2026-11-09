@@ -1,0 +1,87 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.notification-toasts {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    @include flex-column;
+    gap: 10px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+
+    @include mobile {
+        top: 16px;
+        right: 16px;
+    }
+}
+
+.notification-toast {
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid rgba(map.get($colors, accent), 0.5);
+    border-radius: 12px;
+    background: map.get($colors, bg-3);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    animation: notificationToastIn 0.25s ease-out;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: map.get($colors, accent);
+    }
+}
+
+.notification-toast__body {
+    @include flex-column;
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+    padding: 14px 4px 14px 16px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.notification-toast__title {
+    font-size: map.get($font-size, sm);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.notification-toast__message {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+    overflow-wrap: anywhere;
+}
+
+.notification-toast__close {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    margin: 6px 6px 0 0;
+    border: none;
+    background: transparent;
+    color: map.get($colors, gray-2);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+        color: map.get($colors, light);
+    }
+}
+
+@keyframes notificationToastIn {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

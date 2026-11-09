@@ -9,7 +9,7 @@ type AvatarUser = Pick<User, 'username' | 'first_name' | 'last_name'> & {
 
 interface AvatarProps {
     user: AvatarUser
-    size?: 'xs' | 'sm' | 'md'
+    size?: 'xs' | 'sm' | 'md' | 'xl'
     className?: string
     title?: string
 }

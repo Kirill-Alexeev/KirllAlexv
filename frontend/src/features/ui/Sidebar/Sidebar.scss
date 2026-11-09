@@ -143,11 +143,15 @@
         padding: 0;
         justify-content: flex-start;
         width: 100%;
-        height: 35px;
+        min-height: 35px;
         transition: all 0.1s easy;
 
         .btn__icon {
             width: 24px;
+        }
+
+        .btn__text {
+            text-align: left;
         }
 
         &:hover {

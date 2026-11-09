@@ -1,5 +1,6 @@
 import React from 'react'
 import { Sidebar } from '../../../features/ui/Sidebar/Sidebar'
+import { NotificationToasts } from '@/features/notifications/NotificationToasts/NotificationToasts'
 import './Layout.scss'
 
 interface LayoutProps {
@@ -13,6 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <main className="main-content">
                 {children}
             </main>
+            <NotificationToasts />
         </div>
     )
 }

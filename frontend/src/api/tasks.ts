@@ -76,6 +76,8 @@ export const tasksApi = {
         )
         return { ...response, data: unwrapList<Task>(response.data) }
     },
+    /** Переносит дату просроченных задач на сегодня, пока не наступил дедлайн */
+    rollForward: (date: string) => api.post('/tasks/tasks/roll_forward/', { date }),
     getTask: (id: number) => api.get<Task>(`/tasks/tasks/${id}/`),
     createTask: (data: CreateTaskData) => api.post<Task>('/tasks/tasks/', data),
     updateTask: (id: number, data: Partial<CreateTaskData> & { status?: number }) =>

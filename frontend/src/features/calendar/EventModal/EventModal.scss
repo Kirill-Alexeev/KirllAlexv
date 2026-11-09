@@ -1,0 +1,64 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.event-modal {
+    @include flex-column;
+    gap: 14px;
+}
+
+.event-modal__field {
+    @include flex-column;
+    gap: 6px;
+    min-width: 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+
+    input {
+        @include form-control;
+    }
+
+    textarea {
+        padding: 10px 12px;
+        border: 1px solid map.get($colors, gray-4);
+        border-radius: 10px;
+        background: map.get($colors, bg-5);
+        color: map.get($colors, light);
+        font-size: map.get($font-size, sm);
+        resize: vertical;
+
+        &:focus {
+            border-color: map.get($colors, accent);
+            outline: none;
+        }
+    }
+}
+
+.event-modal__check {
+    @include flex-start;
+    gap: 8px;
+    font-size: map.get($font-size, sm);
+    color: map.get($colors, light);
+    cursor: pointer;
+
+    input {
+        width: 16px;
+        height: 16px;
+        accent-color: map.get($colors, accent);
+    }
+}
+
+.event-modal__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.event-modal__footer {
+    @include flex-end;
+    gap: 8px;
+}
+
+.event-modal__delete {
+    margin-right: auto;
+}

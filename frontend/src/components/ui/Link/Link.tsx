@@ -10,6 +10,9 @@ interface LinkProps {
     children?: React.ReactNode
     className?: string
     variant?: 'default' | 'primary' | 'secondary'
+    title?: string
+    /** Счётчик на иконке; при 0 не показывается */
+    badge?: number
 }
 
 export const Link: React.FC<LinkProps> = ({
@@ -18,7 +21,9 @@ export const Link: React.FC<LinkProps> = ({
     icon,
     children,
     className = '',
-    variant = 'default'
+    variant = 'default',
+    title,
+    badge,
 }) => {
     const baseClass = 'custom-link'
     const sizeClass = `custom-link--${size}`
@@ -31,9 +36,16 @@ export const Link: React.FC<LinkProps> = ({
         className
     ].filter(Boolean).join(' ')
 
+    const iconImage = icon && <img className="custom-link__icon" src={icon} alt="decorate"></img>
+
     return (
-        <RouterLink to={to} className={classes}>
-            {icon && <img className="custom-link__icon" src={icon} alt="decorate"></img>}
+        <RouterLink to={to} className={classes} title={title}>
+            {badge === undefined ? iconImage : (
+                <span className="custom-link__icon-wrap">
+                    {iconImage}
+                    {badge > 0 && <span className="custom-link__badge">{badge}</span>}
+                </span>
+            )}
             {children && <span className="custom-link__text">{children}</span>}
         </RouterLink>
     )

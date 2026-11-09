@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
 from .models import User
+
+MAX_PHOTO_SIZE = 5 * 1024 * 1024
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -56,9 +59,22 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 'email',
+            'username', 'first_name', 'last_name', 'email',
             'phone', 'bio', 'date_of_birth', 'photo'
         ]
+
+    def validate_photo(self, value):
+        if value and value.size > MAX_PHOTO_SIZE:
+            raise serializers.ValidationError('Фото должно быть не больше 5 МБ')
+        return value
+
+    def update(self, instance, validated_data):
+        old_photo = instance.photo.name
+        user = super().update(instance, validated_data)
+        # Заменённый файл больше ни на что не ссылается
+        if old_photo and user.photo.name != old_photo:
+            user.photo.storage.delete(old_photo)
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
@@ -87,6 +103,10 @@ class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True, min_length=8)
     new_password_confirm = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value, self.context['request'].user)
+        return value
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['new_password_confirm']:

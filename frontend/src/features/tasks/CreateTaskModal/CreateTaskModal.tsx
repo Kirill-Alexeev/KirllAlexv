@@ -5,7 +5,8 @@ import { Button } from '@/components/ui'
 import type { RootState } from '@/stores'
 import { createTask, createTag } from '@/stores/tasks/tasksActions'
 import { PRIORITY_LABELS, TASK_PRIORITY, toIso, today } from '@/utils/tasksUtils'
-import type { CreateTaskData } from '@/types'
+import type { CreateTaskData, Tag } from '@/types'
+import { tasksApi } from '@/api/tasks'
 import addIcon from '@/assets/icons/add.svg'
 import './CreateTaskModal.scss'
 
@@ -15,6 +16,12 @@ interface CreateTaskModalProps {
     defaultDueDate?: string | null
     workspaceId?: number | null
     assigneeOptions?: { id: number; label: string }[]
+    /** Создание вне страницы задач (сайдбар): стор со списком открытой страницы не трогаем */
+    external?: {
+        tags: Tag[]
+        onCreate: (data: CreateTaskData) => Promise<void>
+        onTagCreated: (tag: Tag) => void
+    }
 }
 
 export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
@@ -23,10 +30,11 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     defaultDueDate = null,
     workspaceId = null,
     assigneeOptions = [],
+    external,
 }) => {
     const dispatch = useDispatch()
     const { tags: tagsState, isLoading } = useSelector((state: RootState) => state.tasks)
-    const tags = Array.isArray(tagsState) ? tagsState : []
+    const tags = external?.tags ?? (Array.isArray(tagsState) ? tagsState : [])
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [dueDate, setDueDate] = useState('')
@@ -36,6 +44,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     const [assigneeId, setAssigneeId] = useState<number | ''>('')
     const [newTag, setNewTag] = useState('')
     const [error, setError] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     useEffect(() => {
         if (isOpen) {
@@ -55,7 +64,13 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         const name = newTag.trim()
         if (!name) return
         try {
-            const tag = await dispatch(createTag({ title: name, workspace: workspaceId }) as any)
+            let tag: Tag
+            if (external) {
+                tag = (await tasksApi.createTag({ title: name, workspace: workspaceId })).data
+                external.onTagCreated(tag)
+            } else {
+                tag = await dispatch(createTag({ title: name, workspace: workspaceId }) as any)
+            }
             setTagId(tag.id)
             setNewTag('')
         } catch (e: any) {
@@ -82,11 +97,15 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             assignees: assigneeId ? [Number(assigneeId)] : [],
         }
 
+        setIsSubmitting(true)
         try {
-            await dispatch(createTask(data) as any)
+            if (external) await external.onCreate(data)
+            else await dispatch(createTask(data) as any)
             onClose()
         } catch {
             setError('Не удалось создать задачу')
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -120,7 +139,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                         <input
                             type="date"
                             value={dueDate}
-                            min={toIso(today())}
+                            min={defaultDueDate && defaultDueDate < toIso(today()) ? defaultDueDate : toIso(today())}
                             onChange={(e) => setDueDate(e.target.value)}
                         />
                     </label>
@@ -201,7 +220,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 {error && <p className="create-task-modal__error">{error}</p>}
 
                 <div className="create-task-modal__footer">
-                    <Button type="submit" variant="primary" loading={isLoading}>
+                    <Button type="submit" variant="primary" loading={isLoading || isSubmitting}>
                         Добавить задачу
                     </Button>
                 </div>

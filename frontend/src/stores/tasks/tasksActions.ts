@@ -17,12 +17,19 @@ import {
     removeWorkspace,
     setCurrentWorkspace,
 } from './tasksSlice'
+import { refreshNotifications } from '@/stores/notifications/notificationsActions'
+import { toIso, today } from '@/utils/tasksUtils'
 import type { CreateTaskData, CreateWorkspaceData, Task } from '@/types'
+
+/** Перед загрузкой задач: если перенос не удался, задачи всё равно должны открыться */
+export const rollForwardTasks = () =>
+    tasksApi.rollForward(toIso(today())).catch(() => undefined)
 
 export const fetchTasks = (workspaceId?: number | null) => async (dispatch: Dispatch) => {
     try {
         dispatch(setLoading(true))
         dispatch(setError(null))
+        await rollForwardTasks()
         const response = workspaceId
             ? await tasksApi.getWorkspaceTasks(workspaceId)
             : await tasksApi.getPersonalTasks()
@@ -40,6 +47,7 @@ export const createTask = (data: CreateTaskData) => async (dispatch: Dispatch) =
         dispatch(setError(null))
         const response = await tasksApi.createTask(data)
         dispatch(addTask(response.data))
+        refreshNotifications(dispatch)
         return response.data
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))
@@ -55,6 +63,7 @@ export const editTask = (id: number, data: Partial<CreateTaskData> & { status?: 
             dispatch(setError(null))
             const response = await tasksApi.updateTask(id, data)
             dispatch(updateTask(response.data))
+            refreshNotifications(dispatch)
             return response.data
         } catch (error: unknown) {
             dispatch(setError(parseApiError(error)))
@@ -66,6 +75,7 @@ export const deleteTask = (id: number) => async (dispatch: Dispatch) => {
     try {
         await tasksApi.deleteTask(id)
         dispatch(removeTask(id))
+        refreshNotifications(dispatch)
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))
         throw error
@@ -88,6 +98,7 @@ export const changeTaskStatus = (id: number, status: number) => async (dispatch:
         const response = await tasksApi.changeTaskStatus(id, status)
         dispatch(updateTask(response.data.task))
         if (response.data.parent) dispatch(updateTask(response.data.parent))
+        refreshNotifications(dispatch)
         return response.data
     } catch (error: unknown) {
         dispatch(setError(parseApiError(error)))

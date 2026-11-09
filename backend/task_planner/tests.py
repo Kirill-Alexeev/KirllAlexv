@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from users.models import User
@@ -77,3 +80,62 @@ class TaskCompletionTests(APITestCase):
         self.client.force_authenticate(self.other)
         r = self.client.post('/api/tasks/tasks/', {'title': 'x', 'parent': parent['id']})
         self.assertEqual(r.status_code, 400)
+
+
+class TaskRollForwardTests(APITestCase):
+    URL = '/api/tasks/tasks/roll_forward/'
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='u', email='u@x.ru', password='pass12345')
+        self.other = User.objects.create_user(username='o', email='o@x.ru', password='pass12345')
+        self.client.force_authenticate(self.user)
+        self.today = timezone.localdate()
+
+    def _task(self, due_shift, deadline_shift=None, owner=None, **extra):
+        deadline = None if deadline_shift is None else self.today + timedelta(days=deadline_shift)
+        return Task.objects.create(
+            title='t', owner=owner or self.user,
+            due_date=self.today + timedelta(days=due_shift), deadline=deadline, **extra)
+
+    def _roll(self, day=None):
+        return self.client.post(self.URL, {'date': (day or self.today).isoformat()}, format='json')
+
+    def _due(self, task):
+        task.refresh_from_db()
+        return task.due_date
+
+    def test_moves_past_date_until_deadline(self):
+        task = self._task(-2, 5)
+        on_deadline = self._task(-1, 0)
+        self.assertEqual(self._roll().data['moved'], 2)
+        self.assertEqual(self._due(task), self.today)
+        self.assertEqual(self._due(on_deadline), self.today)
+        self.assertEqual(self._roll().data['moved'], 0)
+
+    def test_keeps_tasks_that_should_not_move(self):
+        cases = {
+            'deadline passed': self._task(-3, -1),
+            'no deadline': self._task(-2),
+            'future date': self._task(2, 5),
+            'completed': self._task(-2, 5, status=COMPLETED),
+            'other user': self._task(-2, 5, owner=self.other),
+        }
+        before = {name: task.due_date for name, task in cases.items()}
+        self._roll()
+        for name, task in cases.items():
+            self.assertEqual(self._due(task), before[name], name)
+
+    def test_moves_assigned_workspace_task_once(self):
+        ws = Workspace.objects.create(title='w', owner=self.other)
+        WorkspaceMembership.objects.create(user=self.user, workspace=ws, role=1)
+        assigned = self._task(-2, 5, owner=self.other, workspace=ws)
+        assigned.assignees.add(self.user, self.other)
+        unassigned = self._task(-2, 5, owner=self.other, workspace=ws)
+        self.assertEqual(self._roll().data['moved'], 1)
+        self.assertEqual(self._due(assigned), self.today)
+        self.assertEqual(self._due(unassigned), self.today - timedelta(days=2))
+
+    def test_client_date_limited_to_one_day(self):
+        task = self._task(-2, 30)
+        self._roll(self.today + timedelta(days=20))
+        self.assertEqual(self._due(task), self.today + timedelta(days=1))
