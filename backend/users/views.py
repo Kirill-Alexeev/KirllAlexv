@@ -170,7 +170,7 @@ def user_detail(request, pk):
         )
 
 
-SIDEBAR_ACTIONS = ('task', 'workspace_task', 'event')
+SIDEBAR_ACTIONS = ('task', 'workspace_task', 'event', 'note')
 
 
 @api_view(['GET', 'PUT'])

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui'
 import { Modal } from '@/components/ui/Modal/Modal'
 import { tasksApi } from '@/api/tasks'
@@ -13,12 +13,14 @@ import { getMemberName } from '@/utils/tasksUtils'
 import type { CreateTaskData, SidebarActionId, Tag, Task, Workspace } from '@/types'
 import addIcon from '@/assets/icons/add.svg'
 import calendarIcon from '@/assets/icons/calendar.svg'
+import noteIcon from '@/assets/icons/list-check.svg'
 import './SidebarQuickActions.scss'
 
 const ACTION_VIEW: Record<SidebarActionId, { label: string; icon: string }> = {
     task: { label: 'Добавить задачу', icon: addIcon },
     workspace_task: { label: 'Добавить задачу в пространство', icon: addIcon },
     event: { label: 'Добавить событие', icon: calendarIcon },
+    note: { label: 'Добавить заметку', icon: noteIcon },
 }
 
 interface TaskModalState {
@@ -43,6 +45,7 @@ interface SidebarQuickActionsProps {
 export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({ actions, isCollapsed }) => {
     const dispatch = useDispatch()
     const { pathname } = useLocation()
+    const navigate = useNavigate()
     const [taskModal, setTaskModal] = useState<TaskModalState | null>(null)
     const [eventOpen, setEventOpen] = useState(false)
     const [pickerOpen, setPickerOpen] = useState(false)
@@ -95,6 +98,7 @@ export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({ action
         task: openPersonalTask,
         workspace_task: () => setPickerOpen(true),
         event: () => setEventOpen(true),
+        note: () => navigate('/notes?new=1'),
     }
 
     const handleCreateTask = async (data: CreateTaskData) => {

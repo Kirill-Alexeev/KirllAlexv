@@ -13,7 +13,7 @@ interface AppLink {
 
 const mainApps: AppLink[] = [
     { name: 'To-Do', path: '/tasks', available: true },
-    { name: 'Заметки', path: '/notes', available: false },
+    { name: 'Заметки', path: '/notes', available: true },
     { name: 'Библиотека', path: '/library', available: false },
     { name: 'Тренировки', path: '/workouts', available: false },
     { name: 'Трекер бюджета', path: '/budget', available: false },

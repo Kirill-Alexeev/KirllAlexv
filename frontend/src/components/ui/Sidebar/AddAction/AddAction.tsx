@@ -17,7 +17,7 @@ const availableActions: { id: string; label: string; enabled: boolean }[] = [
     { id: 'task', label: 'Добавить задачу', enabled: true },
     { id: 'workspace_task', label: 'Добавить задачу в пространство', enabled: true },
     { id: 'event', label: 'Добавить событие', enabled: true },
-    { id: 'note', label: 'Добавить заметку', enabled: false },
+    { id: 'note', label: 'Добавить заметку', enabled: true },
     { id: 'book', label: 'Добавить книгу', enabled: false },
     { id: 'workout', label: 'Добавить тренировку', enabled: false },
     { id: 'expense', label: 'Добавить расход', enabled: false },

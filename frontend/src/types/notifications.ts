@@ -21,4 +21,4 @@ export interface NotificationsState {
     items: AppNotification[]
 }
 
-export type SidebarActionId = 'task' | 'workspace_task' | 'event'
+export type SidebarActionId = 'task' | 'workspace_task' | 'event' | 'note'

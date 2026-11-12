@@ -1,0 +1,493 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+$check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10' fill='none'%3E%3Cpath d='M1 5.2L4.2 8.4L11 1.6' stroke='%23040710' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+.note-editor {
+    @include flex-column;
+    gap: 12px;
+    min-height: 100%;
+
+    &--message {
+        @include flex-center-column;
+        gap: 12px;
+        min-height: 320px;
+        color: map.get($colors, gray-2);
+        font-size: map.get($font-size, sm);
+    }
+}
+
+.note-editor__header {
+    @include flex-start;
+    gap: 12px;
+}
+
+.note-editor__back {
+    display: none;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border: 1px solid map.get($colors, gray-4);
+    border-radius: 10px;
+    background: map.get($colors, bg-5);
+    color: map.get($colors, light);
+    font-size: map.get($font-size, sm);
+    cursor: pointer;
+
+    &:hover {
+        border-color: map.get($colors, accent);
+    }
+
+    .note-editor--message & {
+        display: inline-block;
+    }
+
+    @media (max-width: 991px) {
+        display: inline-block;
+    }
+}
+
+.note-editor__title {
+    flex: 1;
+    min-width: 0;
+    border: none !important;
+    border-bottom: 1px solid map.get($colors, gray-4) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: map.get($colors, light) !important;
+    font-size: map.get($font-size, shl) !important;
+    font-weight: map.get($font-weight, semibold);
+    padding: 0 0 8px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: border-color 0.2s ease;
+
+    &:focus,
+    &:focus-visible {
+        border-bottom-color: map.get($colors, accent) !important;
+    }
+
+    &::placeholder {
+        color: map.get($colors, gray-3);
+    }
+
+    @include mobile {
+        font-size: map.get($font-size, xl) !important;
+    }
+}
+
+.note-editor__delete {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    padding: 9px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        background: rgba(map.get($colors, error), 0.35);
+        border-color: rgba(map.get($colors, error), 0.6);
+    }
+}
+
+.note-editor__meta {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.note-editor__status {
+    margin-left: auto;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+    white-space: nowrap;
+
+    &--saving,
+    &--dirty {
+        color: map.get($colors, gray-2);
+    }
+
+    &--error {
+        color: map.get($colors, error);
+    }
+}
+
+.note-editor__toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: map.get($colors, bg-4);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 12px;
+}
+
+.note-editor__tool {
+    @include flex-center;
+    gap: 6px;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: map.get($colors, light);
+    font-size: map.get($font-size, mid);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    img {
+        width: 18px;
+        height: 18px;
+    }
+
+    span {
+        font-size: map.get($font-size, sm);
+    }
+
+    &:hover:not(:disabled) {
+        background: rgba(map.get($colors, bg-5), 0.7);
+        border-color: rgba(map.get($colors, gray-3), 0.6);
+    }
+
+    &--active {
+        background: rgba(map.get($colors, accent), 0.16);
+        border-color: rgba(map.get($colors, accent), 0.7);
+        color: map.get($colors, accent);
+    }
+
+    &--bold {
+        font-weight: map.get($font-weight, bold);
+    }
+
+    &--italic {
+        font-style: italic;
+        font-family: map.get($font-family, serif);
+    }
+
+    &--underline {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+}
+
+.note-editor__separator {
+    width: 1px;
+    height: 22px;
+    margin: 0 4px;
+    background: rgba(map.get($colors, gray-4), 0.9);
+}
+
+.note-editor__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+}
+
+.note-editor__body {
+    position: relative;
+    flex: 1;
+}
+
+// ===== Текст заметки =====
+.note-editor__content {
+    position: relative;
+    // Фото обтекается текстом, а сам блок растягивается под плавающие фото
+    display: flow-root;
+    min-height: 360px;
+    padding: 4px 2px 40px;
+    color: map.get($colors, light);
+    font-size: map.get($font-size, mid);
+    line-height: map.get($line-height, relaxed);
+    outline: none;
+    word-break: break-word;
+    cursor: text;
+
+    &--blank::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        top: 4px;
+        left: 2px;
+        color: map.get($colors, gray-3);
+        pointer-events: none;
+    }
+
+    p,
+    div {
+        margin: 0 0 0.5em;
+    }
+
+    b,
+    strong {
+        font-weight: map.get($font-weight, bold);
+    }
+
+    i,
+    em {
+        font-style: italic;
+    }
+
+    u {
+        text-decoration: underline solid;
+        text-underline-offset: 3px;
+    }
+
+    ul,
+    ol {
+        margin: 0 0 0.6em;
+        padding-left: 26px;
+    }
+
+    ul li {
+        list-style: disc;
+    }
+
+    ol li {
+        list-style: decimal;
+    }
+
+    li {
+        margin-bottom: 0.2em;
+        padding-left: 2px;
+
+        &::marker {
+            color: map.get($colors, accent);
+        }
+    }
+
+    ul[data-type='checklist'] {
+        padding-left: 0;
+
+        > li {
+            position: relative;
+            list-style: none;
+            padding-left: 30px;
+            transition: color 0.2s ease;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 2px;
+                top: 0.32em;
+                width: 18px;
+                height: 18px;
+                border: 2px solid map.get($colors, gray-2);
+                border-radius: 5px;
+                background: transparent center / 11px no-repeat;
+                cursor: pointer;
+                transition: background-color 0.2s ease, border-color 0.2s ease;
+            }
+
+            &:hover::before {
+                border-color: map.get($colors, accent);
+            }
+
+            &[data-checked='true'] {
+                color: map.get($colors, gray-2);
+                text-decoration: line-through;
+                text-decoration-color: rgba(map.get($colors, gray-2), 0.8);
+
+                &::before {
+                    border-color: map.get($colors, accent);
+                    background-color: map.get($colors, accent);
+                    background-image: $check-mark;
+                }
+            }
+        }
+    }
+
+    // ===== Блок фото с подписью =====
+    figure {
+        position: relative;
+        width: 45%;
+        margin: 4px 0 12px 20px;
+        float: right;
+        clear: right;
+        cursor: grab;
+        user-select: none;
+        transition: opacity 0.2s ease;
+
+        &[data-align='left'] {
+            float: left;
+            clear: left;
+            margin: 4px 20px 12px 0;
+        }
+
+        &[data-size='s'] {
+            width: 30%;
+        }
+
+        &[data-size='l'] {
+            width: 62%;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            -webkit-user-drag: none;
+            transition: border-color 0.2s ease;
+        }
+
+        &:hover img {
+            border-color: rgba(map.get($colors, accent), 0.45);
+        }
+
+        &.is-active img {
+            border-color: map.get($colors, accent);
+        }
+
+        &.is-dragging {
+            opacity: 0.4;
+        }
+
+        @include mobile {
+            &[data-size='s'] {
+                width: 45%;
+            }
+
+            &[data-size='m'] {
+                width: 60%;
+            }
+
+            &[data-size='l'] {
+                width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    }
+
+    figcaption {
+        padding: 6px 4px 0;
+        color: map.get($colors, gray-1);
+        font-size: map.get($font-size, sm);
+        line-height: map.get($line-height, normal);
+        text-align: center;
+        outline: none;
+        cursor: text;
+        user-select: text;
+
+        &:empty::before {
+            content: attr(data-placeholder);
+            color: map.get($colors, gray-3);
+        }
+    }
+}
+
+// ===== Панель выбранного фото =====
+.note-figure-panel {
+    position: absolute;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: rgba(map.get($colors, bg-5), 0.92);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.8);
+    border-radius: 10px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+    @include fade-in(0.15s);
+}
+
+.note-figure-panel__btn {
+    @include flex-center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: map.get($colors, light);
+    font-size: map.get($font-size, xs);
+    font-weight: map.get($font-weight, semibold);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    img {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        background: rgba(map.get($colors, bg-3), 0.9);
+    }
+
+    &--active {
+        border-color: rgba(map.get($colors, accent), 0.7);
+        color: map.get($colors, accent);
+    }
+
+    &--drag {
+        cursor: grab;
+        touch-action: none;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    &--danger:hover {
+        background: rgba(map.get($colors, error), 0.45);
+    }
+}
+
+.note-figure-panel__separator {
+    width: 1px;
+    height: 18px;
+    margin: 0 2px;
+    background: rgba(map.get($colors, gray-4), 0.9);
+}
+
+// Куда встанет фото при перетаскивании
+.note-drop-line {
+    position: absolute;
+    z-index: 15;
+    height: 3px;
+    margin-top: -2px;
+    border-radius: 2px;
+    background: map.get($colors, accent);
+    pointer-events: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 6px;
+        width: 30%;
+        height: 36px;
+        border: 2px dashed rgba(map.get($colors, accent), 0.8);
+        border-radius: 8px;
+        background: rgba(map.get($colors, accent), 0.08);
+    }
+
+    &--left::after {
+        left: 0;
+    }
+
+    &--right::after {
+        right: 0;
+    }
+}

@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/tasks/', include('task_planner.urls')),
     path('api/calendar/', include('calendar_events.urls')),
     path('api/notifications/', include('notifications.urls')),
+    path('api/notes/', include('notes.urls')),
 ]
 
 if settings.DEBUG:

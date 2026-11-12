@@ -3,6 +3,7 @@ import authReducer from './auth/authSlice'
 import tasksReducer from './tasks/tasksSlice'
 import calendarReducer from './calendar/calendarSlice'
 import notificationsReducer from './notifications/notificationsSlice'
+import notesReducer from './notes/notesSlice'
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         tasks: tasksReducer,
         calendar: calendarReducer,
         notifications: notificationsReducer,
+        notes: notesReducer,
     },
 })
 

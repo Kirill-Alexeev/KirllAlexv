@@ -10,6 +10,7 @@ import { JoinWorkspacePage } from '@/pages/tasks/JoinWorkspacePage/JoinWorkspace
 import { CalendarPage } from '@/pages/calendar/CalendarPage/CalendarPage'
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage/NotificationsPage'
 import { ProfilePage } from '@/pages/profile/ProfilePage/ProfilePage'
+import { NotesPage } from '@/pages/notes/NotesPage/NotesPage'
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -44,6 +45,12 @@ export const AppRoutes: React.FC = () => {
       <Route path="/calendar" element={
         <PrivateRoute>
           <CalendarPage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/notes" element={
+        <PrivateRoute>
+          <NotesPage />
         </PrivateRoute>
       } />
 

@@ -26,7 +26,7 @@ const apps: App[] = [
         name: 'Заметки',
         description: 'Создавайте и организуйте заметки в удобном формате',
         path: '/notes',
-        available: false,
+        available: true,
         screenshot: ''
     },
     {

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'task_planner',
     'calendar_events',
     'notifications',
+    'notes',
 ]
 
 MIDDLEWARE = [

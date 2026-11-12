@@ -1,0 +1,139 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.note-filters {
+    @include flex-column;
+    gap: 10px;
+    padding: 12px;
+    background: map.get($colors, bg-3);
+    border-radius: 12px;
+    border: 1px solid rgba(map.get($colors, gray-4), 0.5);
+}
+
+.note-filters__search {
+    position: relative;
+
+    input {
+        width: 100%;
+        padding: 10px 40px 10px 14px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        background: map.get($colors, bg-5);
+        color: map.get($colors, light);
+        font-size: map.get($font-size, sm);
+
+        &::placeholder {
+            color: map.get($colors, gray-3);
+        }
+
+        &:focus {
+            border-color: map.get($colors, accent);
+            box-shadow: none;
+            outline: none;
+        }
+    }
+}
+
+.note-filters__search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.note-filters__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.note-filters__tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 1px solid rgba(map.get($colors, gray-3), 0.6);
+    border-radius: 999px;
+    background: transparent;
+    color: map.get($colors, gray-1);
+    font-size: map.get($font-size, xs);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+
+    // Кнопка «Все» — сама по себе тег
+    &:is(button) {
+        padding: 4px 12px;
+    }
+
+    &:hover {
+        border-color: rgba(map.get($colors, accent), 0.7);
+
+        .note-filters__tag-delete {
+            width: 20px;
+            opacity: 0.6;
+        }
+    }
+
+    &--active {
+        border-color: map.get($colors, accent);
+        background: rgba(map.get($colors, accent), 0.14);
+        color: map.get($colors, accent);
+    }
+}
+
+.note-filters__tag-name {
+    padding: 4px 4px 4px 12px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:last-child {
+        padding-right: 12px;
+    }
+}
+
+.note-filters__tag-delete {
+    width: 0;
+    height: 20px;
+    margin-right: 4px;
+    padding: 5px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 0.2s ease, background 0.2s ease, width 0.2s ease;
+
+    img {
+        display: block;
+        width: 10px;
+        height: 10px;
+    }
+
+    &:focus-visible {
+        width: 20px;
+        opacity: 1;
+    }
+
+    &:hover {
+        opacity: 1 !important;
+        background: rgba(map.get($colors, error), 0.35);
+    }
+
+    // На сенсорных экранах наведения нет — крестик виден всегда
+    @media (hover: none) {
+        width: 20px;
+        opacity: 0.6;
+    }
+}

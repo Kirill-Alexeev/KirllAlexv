@@ -1,0 +1,91 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.notes-page {
+    min-height: calc(100vh - 40px);
+}
+
+.notes-page__layout {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 16px;
+
+    // Узкий экран: либо список, либо открытая заметка
+    @media (max-width: 991px) {
+        grid-template-columns: minmax(0, 1fr);
+
+        .notes-page--editing & .notes-page__sidebar {
+            display: none;
+        }
+
+        .notes-page:not(.notes-page--editing) & .notes-page__editor {
+            display: none;
+        }
+    }
+}
+
+.notes-page__sidebar {
+    @include flex-column;
+    gap: 12px;
+    min-width: 0;
+
+    @media (min-width: 992px) {
+        position: sticky;
+        top: 16px;
+        max-height: calc(100vh - 32px);
+    }
+}
+
+.notes-page__top {
+    @include flex-between;
+    gap: 12px;
+}
+
+.notes-page__title {
+    margin: 0;
+    font-size: map.get($font-size, xl);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+}
+
+.notes-page__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, sm);
+    white-space: pre-line;
+}
+
+.notes-page__hint {
+    margin: 0;
+    padding: 24px 0;
+    text-align: center;
+    color: map.get($colors, gray-2);
+    font-size: map.get($font-size, sm);
+}
+
+.notes-page__list {
+    @include flex-column;
+    gap: 8px;
+    margin: 0;
+    padding: 0 4px 4px 0;
+    list-style: none;
+    overflow-y: auto;
+
+    @include scrollbar(4px, map.get($colors, gray-3), transparent);
+}
+
+.notes-page__editor {
+    min-width: 0;
+    min-height: 480px;
+    padding: 18px 20px;
+    background: map.get($colors, bg-3);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 14px;
+
+    @include mobile {
+        padding: 14px 12px;
+    }
+}

@@ -1,0 +1,153 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.note-tags {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.note-tags__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 4px 3px 10px;
+    border-radius: 999px;
+    background: rgba(map.get($colors, accent), 0.14);
+    color: map.get($colors, accent);
+    font-size: map.get($font-size, xs);
+}
+
+.note-tags__chip-remove {
+    width: 18px;
+    height: 18px;
+    padding: 4px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, background 0.2s ease;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+        background: rgba(map.get($colors, error), 0.35);
+    }
+}
+
+.note-tags__add {
+    padding: 3px 10px;
+    border: 1px dashed rgba(map.get($colors, gray-3), 0.8);
+    border-radius: 999px;
+    background: transparent;
+    color: map.get($colors, gray-2);
+    font-size: map.get($font-size, xs);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &--active {
+        border-color: map.get($colors, accent);
+        color: map.get($colors, accent);
+    }
+}
+
+.note-tags__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 30;
+    width: 260px;
+    padding: 12px;
+    background: map.get($colors, bg-4);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+    @include flex-column;
+    gap: 10px;
+}
+
+.note-tags__list {
+    @include flex-column;
+    gap: 2px;
+    max-height: 180px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include scrollbar(4px, map.get($colors, gray-3), transparent);
+}
+
+.note-tags__option {
+    width: 100%;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: map.get($colors, accent);
+    font-size: map.get($font-size, sm);
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(map.get($colors, bg-5), 0.6);
+        outline: none;
+    }
+}
+
+.note-tags__hint {
+    margin: 0;
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-2);
+}
+
+.note-tags__new {
+    @include flex-start;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(map.get($colors, gray-4), 0.6);
+
+    input {
+        @include form-control;
+        flex: 1;
+        min-width: 0;
+        min-height: 34px;
+        padding: 6px 10px;
+    }
+}
+
+.note-tags__new-btn {
+    min-height: 34px;
+    white-space: nowrap;
+
+    .btn__icon {
+        width: 12px;
+        height: 12px;
+        filter: brightness(0) saturate(100%) invert(76%) sepia(39%) saturate(477%) hue-rotate(46deg) brightness(89%) contrast(87%);
+    }
+
+    &:hover:not(.btn--disabled) .btn__icon {
+        filter: none;
+    }
+}
+
+.note-tags__error {
+    margin: 0;
+    color: map.get($colors, error);
+    font-size: map.get($font-size, xs);
+}

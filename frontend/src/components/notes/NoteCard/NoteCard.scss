@@ -1,0 +1,85 @@
+@use 'sass:map';
+@use '../../../assets/styles/variables' as *;
+@use '../../../assets/styles/mixins' as *;
+
+.note-card {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    background: map.get($colors, bg-3);
+    border: 1px solid rgba(map.get($colors, gray-4), 0.6);
+    border-radius: 12px;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+        border-color: rgba(map.get($colors, accent), 0.45);
+    }
+
+    &--active {
+        border-color: map.get($colors, accent);
+        background: map.get($colors, bg-2);
+    }
+}
+
+.note-card__body {
+    flex: 1;
+    min-width: 0;
+    @include flex-column;
+    gap: 4px;
+}
+
+.note-card__title {
+    margin: 0;
+    font-size: map.get($font-size, mid);
+    font-weight: map.get($font-weight, semibold);
+    color: map.get($colors, light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--empty {
+        color: map.get($colors, gray-2);
+        font-weight: map.get($font-weight, medium);
+    }
+}
+
+.note-card__preview {
+    margin: 0;
+    font-size: map.get($font-size, sm);
+    line-height: map.get($line-height, normal);
+    color: map.get($colors, gray-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    margin-top: 2px;
+}
+
+.note-card__date {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, gray-3);
+}
+
+.note-card__tag {
+    font-size: map.get($font-size, xs);
+    color: map.get($colors, accent);
+}
+
+.note-card__cover {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+}
